@@ -1,7 +1,9 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useState } from "react";
 import axios from "../api/api.jsx";
+import { menuState } from "../contexts/menuContext.jsx";
 
 const addItem = ({ isVisible, setIsVisible, category }) => {
+    const [render, setRender] = useContext(menuState);
     const [formData, setFormData] = useState({
         item: "",
         price: 0.0,
@@ -20,6 +22,15 @@ const addItem = ({ isVisible, setIsVisible, category }) => {
             console.error(error.message);
         }
         setIsVisible(!isVisible);
+        setRender(render+1);
+        setFormData({
+            item: "",
+            price: 0.0,
+            availability: false,
+            veg_or_nonveg: "",
+            description: "",
+            category: "",
+        });
     };
     if (!isVisible) return null;
     return (

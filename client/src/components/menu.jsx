@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import MenuItems from "./menuItems";
+import MenuItems from "./menuItems.jsx";
 import "./menu.modules.css";
 import plus from "/plus.png";
-import AddItem from "./addItem";
+import AddItem from "./addItem.jsx";
 import axios from "../api/api.jsx";
 
 const menu = () => {
@@ -40,10 +40,7 @@ const menu = () => {
                         <img src={plus} alt="add item" height={30} width={30} />
                     </button>
                 </div>
-                <MenuItems
-                    category={category}
-                    setIsVisible={setItemForm}
-                />
+                <MenuItems setIsVisible={setItemForm} />
             </main>
         </>
     );

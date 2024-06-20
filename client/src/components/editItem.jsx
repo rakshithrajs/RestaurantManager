@@ -1,16 +1,16 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import axios from "../api/api.jsx";
+import { menuState } from "../contexts/menuContext.jsx";
 
 const editItem = ({ isVisible, setIsVisible, category, id }) => {
     const [formData, setFormData] = useState({});
-    const [formKey, setFormKey] = useState(0);
+    const [render, setRender] = useContext(menuState);
     useEffect(() => {
         const getItems = async () => {
             try {
                 const response = await axios.get(`/menu/${id}`);
                 setFormData(response.data);
-                
-                console.log("updated formData:", formData);
+                console.log(response.data);
             } catch (error) {
                 console.log(error.message);
                 setFormData({});
@@ -18,19 +18,15 @@ const editItem = ({ isVisible, setIsVisible, category, id }) => {
         };
         getItems();
     }, [id]);
-    useEffect(() => {
-        console.log("Updated formData:", formData);
-    }, [formData]);
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
-            console.log(formData.category);
             const response = await axios.put(`/menu/${id}`, formData);
-            console.log(response.data);
         } catch (error) {
             console.error(error.message);
         }
         setIsVisible(!isVisible);
+        setRender(render + 1);  
     };
     if (!isVisible) return null;
     return (
@@ -44,7 +40,6 @@ const editItem = ({ isVisible, setIsVisible, category, id }) => {
                         action="post"
                         className=" p-4"
                         onSubmit={handleSubmit}
-                        key={formKey}
                     >
                         <div className="grid gap-4 sm:grid-cols-2 sm:gap-6">
                             <div className="sm:col-span-2">

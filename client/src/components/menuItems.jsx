@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import edit from "/edit.png";
 import rupee from "../utils/currencyFormatter.jsx";
 import api from "../api/api.jsx";
@@ -7,10 +7,13 @@ import available from "/available.png";
 import notavailable from "/notavailable.png";
 import deleteImg from "/delete.png";
 import EditItem from "./editItem.jsx";
+import { menuState } from "../contexts/menuContext.jsx";
+import "./menuItems.modules.css";
 
-const menuItems = ({ category }) => {
+const menuItems = () => {
     const [editForm, setEditForm] = useState(false);
     const [items, setItems] = useState([]);
+    const [render, setRender] = useContext(menuState);
     useEffect(() => {
         const getItems = async () => {
             try {
@@ -21,7 +24,17 @@ const menuItems = ({ category }) => {
             }
         };
         getItems();
-    }, []);
+    }, [render]);
+    const handleDelete = async (id) => {
+        try {
+            console.log(id);
+            const response = await api.delete(`/menu/${id}`);
+            console.log(response.data);
+        } catch (error) {
+            console.log(error.message);
+        }
+        setRender(render + 1);
+    };
     const [idi, setId] = useState(0);
     return (
         <ol>
@@ -36,9 +49,9 @@ const menuItems = ({ category }) => {
             {items.map((i, index) => (
                 <li
                     key={i._id}
-                    className="grid grid-cols-6 text-[1.5vw] p-3 transition-all duration-100 hover:bg-orange-400 rounded-md"
+                    className="grid grid-cols-6-i text-[1.5vw] p-3 transition-all duration-100 hover:bg-orange-400 rounded-md"
                 >
-                    {index + 1}
+                    <span>{index + 1}</span>
                     <p className=" flex flex-col justify-center font-semibold">
                         {capitalize(i.item)}
                         <span className="font-thin text-[1.3vw]">
@@ -69,7 +82,11 @@ const menuItems = ({ category }) => {
                     >
                         <img src={edit} alt="edit" className="h-10 w-10" />
                     </button>
-                    <button>
+                    <button
+                        onClick={() => {
+                            handleDelete(i._id);
+                        }}
+                    >
                         <img
                             src={deleteImg}
                             alt="delete"

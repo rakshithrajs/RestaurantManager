@@ -4,6 +4,7 @@ import {
     getMenuItems,
     updateMenuItmes,
     getOneItem,
+    deleteItems,
 } from "../contorllers/menu.js";
 const router = express.Router();
 
@@ -12,8 +13,6 @@ router
     .route("/:id")
     .get(getOneItem)
     .put(updateMenuItmes)
-    .delete((req, res) => {
-        res.send("deleted");
-    });
+    .delete(deleteItems);
 
 export default router;
