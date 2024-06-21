@@ -1,4 +1,0 @@
-.grid-cols-6-i{
-    grid-template-columns:min-content 2fr 0.5fr 0.5fr 0.5fr 0.5fr;
-    gap: 1rem;
-}

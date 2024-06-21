@@ -91,7 +91,7 @@ const editItem = ({ isVisible, setIsVisible, id, editItem }) => {
                                 <select
                                     id="category"
                                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 "
-                                    value=""
+                                    value={formData.category}
                                     onChange={(event) => {
                                         setFormData({
                                             ...formData,
@@ -107,28 +107,6 @@ const editItem = ({ isVisible, setIsVisible, id, editItem }) => {
                                     ))}
                                 </select>
                             </div>
-                            <div className="flex items-center">
-                                <label
-                                    htmlFor="availability"
-                                    className="block mb-2 text-sm font-medium text-gray-90 mr-5"
-                                >
-                                    Availability
-                                </label>
-                                <input
-                                    type="checkbox"
-                                    name="avaialability"
-                                    id="availability"
-                                    checked= {formData.availability || false}
-                                    onChange={(event) => {
-                                        if (event.target.checked) {
-                                            setFormData({
-                                                ...formData,
-                                                availability: true,
-                                            });
-                                        }
-                                    }}
-                                />
-                            </div>
                             <div className="flex gap-4 items-center">
                                 <label
                                     htmlFor="veg"
@@ -140,7 +118,7 @@ const editItem = ({ isVisible, setIsVisible, id, editItem }) => {
                                     type="radio"
                                     name="veg_or_nonveg"
                                     value="veg"
-                                    checked={((formData.veg_or_nonveg=='veg') && true) || false}
+                                    checked={formData.veg_or_nonveg=='veg'}
                                     id="veg"
                                     onChange={(event) =>
                                         setFormData({
@@ -160,7 +138,7 @@ const editItem = ({ isVisible, setIsVisible, id, editItem }) => {
                                     name="veg_or_nonveg"
                                     value="non-veg"
                                     id="nonveg"
-                                    checked={((formData.veg_or_nonveg=='nonveg') && true) || false}
+                                    checked={formData.veg_or_nonveg=='non-veg'}
                                     onChange={(event) =>
                                         setFormData({
                                             ...formData,

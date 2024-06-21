@@ -26,7 +26,9 @@ const menu = () => {
                         <img src={plus} alt="add item" height={30} width={30} />
                     </button>
                 </div>
-                <MenuItems setIsVisible={setItemForm} />
+                <div className="p-4">
+                    <MenuItems setIsVisible={setItemForm} />
+                </div>
             </main>
         </>
     );

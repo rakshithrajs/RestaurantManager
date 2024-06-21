@@ -8,7 +8,6 @@ const addItem = ({ isVisible, setIsVisible }) => {
     const [formData, setFormData] = useState({
         item: "",
         price: 0.0,
-        availability: false,
         veg_or_nonveg: "",
         description: "",
         category: "",
@@ -27,7 +26,6 @@ const addItem = ({ isVisible, setIsVisible }) => {
         setFormData({
             item: "",
             price: 0.0,
-            availability: false,
             veg_or_nonveg: "",
             description: "",
             category: "",
@@ -120,28 +118,6 @@ const addItem = ({ isVisible, setIsVisible }) => {
                                         </option>
                                     ))}
                                 </select>
-                            </div>
-                            <div className="flex items-center">
-                                <label
-                                    htmlFor="availability"
-                                    className="block mb-2 text-sm font-medium text-gray-90 mr-5"
-                                >
-                                    Availability
-                                </label>
-                                <input
-                                    type="checkbox"
-                                    name="avaialability"
-                                    id="availability"
-                                    value={formData.availability}
-                                    onChange={(event) => {
-                                        if (event.target.checked) {
-                                            setFormData({
-                                                ...formData,
-                                                availability: true,
-                                            });
-                                        }
-                                    }}
-                                />
                             </div>
                             <div className="flex gap-4 items-center">
                                 <label

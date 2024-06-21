@@ -13,11 +13,6 @@ const menuSchema = new Schema({
         required: true,
         default: 0.0,
     },
-    availability: {
-        type: Boolean,
-        required: true,
-        default: true,
-    },
     veg_or_nonveg: {
         type: String,
         required: true,
@@ -34,4 +29,4 @@ const menuSchema = new Schema({
     ],
 });
 
-export const menuModel = new model('menuModel', menuSchema);
+export const menuModel = new model("menuModel", menuSchema);
