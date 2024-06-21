@@ -1,27 +1,28 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import axios from "../api/api.jsx";
-import { menuState } from "../contexts/menuContext.jsx";
+import { categorydata, menuState } from "../contexts/menuContext.jsx";
 
-const editItem = ({ isVisible, setIsVisible, category, id }) => {
+const editItem = ({ isVisible, setIsVisible, id }) => {
     const [formData, setFormData] = useState({});
     const [render, setRender] = useContext(menuState);
+    const category = useContext(categorydata);
     useEffect(() => {
         const getItems = async () => {
             try {
                 const response = await axios.get(`/menu/${id}`);
-                setFormData(response.data);
-                console.log(response.data);
+                setFormData(response.data[0]);
             } catch (error) {
                 console.log(error.message);
                 setFormData({});
             }
         };
         getItems();
-    }, [id]);
+    }, []);
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
             const response = await axios.put(`/menu/${id}`, formData);
+            console.log(response.data)
         } catch (error) {
             console.error(error.message);
         }
@@ -34,7 +35,7 @@ const editItem = ({ isVisible, setIsVisible, category, id }) => {
             <div className="w-[50%] flex flex-col">
                 <div className="bg-white p-2 rounded">
                     <h2 className="mb-4 text-2xl text-center font-bold text-gray-900">
-                        Add a new product
+                        Edit product
                     </h2>
                     <form
                         action="post"
@@ -205,7 +206,7 @@ const editItem = ({ isVisible, setIsVisible, category, id }) => {
                                 type="submit"
                                 className="flex items-center px-5 py-2.5 mt-2 text-sm font-medium text-center rounded-lg focus:ring-4 focus:ring-primary-200"
                             >
-                                Add product
+                                Edit product
                             </button>
                             <button
                                 className=" flex items-center px-5 py-2.5 mt-2 text-sm font-medium text-center rounded-lg text-red-600  focus:ring-4 focus:ring-primary-200"

@@ -42,7 +42,6 @@ const menuItems = () => {
                 <EditItem
                     isVisible={editForm}
                     setIsVisible={setEditForm}
-                    category={category}
                     id={idi}
                 />
             )}

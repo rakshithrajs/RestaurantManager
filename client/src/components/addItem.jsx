@@ -1,9 +1,10 @@
 import React, { useContext, useState } from "react";
 import axios from "../api/api.jsx";
-import { menuState } from "../contexts/menuContext.jsx";
+import { categorydata, menuState } from "../contexts/menuContext.jsx";
 
-const addItem = ({ isVisible, setIsVisible, category }) => {
+const addItem = ({ isVisible, setIsVisible }) => {
     const [render, setRender] = useContext(menuState);
+    const category = useContext(categorydata)
     const [formData, setFormData] = useState({
         item: "",
         price: 0.0,

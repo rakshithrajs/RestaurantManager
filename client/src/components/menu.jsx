@@ -7,24 +7,11 @@ import axios from "../api/api.jsx";
 
 const menu = () => {
     const [itemForm, setItemForm] = useState(false);
-    const [category, setCategory] = useState([]);
-    useEffect(() => {
-        const fetchCategories = async () => {
-            try {
-                const response = await axios.get("/category");
-                setCategory(response.data);
-            } catch (error) {
-                console.log(error.message);
-            }
-        };
-        fetchCategories();
-    }, []);
     return (
         <>
             <AddItem
                 isVisible={itemForm}
                 setIsVisible={setItemForm}
-                category={category}
             />
             <main className=" bg-orange-300 w-2/3 rounded-lg m-auto mt-8">
                 <div className=" p-4 flex items-center justify-center gap-8">
