@@ -1,33 +1,21 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
-import axios from "../api/api.jsx";
-import { categorydata, menuState } from "../contexts/menuContext.jsx";
+import axios from "../../api/api.jsx";
+import { categorydata, menuState } from "../../contexts/menuContext.jsx";
 
-const editItem = ({ isVisible, setIsVisible, id }) => {
-    const [formData, setFormData] = useState({});
+const editItem = ({ isVisible, setIsVisible, id, editItem }) => {
+    const [formData, setFormData] = useState(editItem);
     const [render, setRender] = useContext(menuState);
     const category = useContext(categorydata);
-    useEffect(() => {
-        const getItems = async () => {
-            try {
-                const response = await axios.get(`/menu/${id}`);
-                setFormData(response.data[0]);
-            } catch (error) {
-                console.log(error.message);
-                setFormData({});
-            }
-        };
-        getItems();
-    }, []);
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
             const response = await axios.put(`/menu/${id}`, formData);
-            console.log(response.data)
+            console.log(response.data);
         } catch (error) {
             console.error(error.message);
         }
         setIsVisible(!isVisible);
-        setRender(render + 1);  
+        setRender(render + 1);
     };
     if (!isVisible) return null;
     return (
@@ -57,7 +45,7 @@ const editItem = ({ isVisible, setIsVisible, id }) => {
                                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 "
                                     placeholder="Type Item name"
                                     required
-                                    value={formData.item}
+                                    value={formData.item || ""}
                                     onChange={(event) => {
                                         setFormData({
                                             ...formData,
@@ -84,7 +72,7 @@ const editItem = ({ isVisible, setIsVisible, id }) => {
                                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 "
                                     required
                                     placeholder="Add the price"
-                                    value={formData.price}
+                                    value={formData.price || 0}
                                     onChange={(event) =>
                                         setFormData({
                                             ...formData,
@@ -103,7 +91,7 @@ const editItem = ({ isVisible, setIsVisible, id }) => {
                                 <select
                                     id="category"
                                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 "
-                                    value={formData.category}
+                                    value=""
                                     onChange={(event) => {
                                         setFormData({
                                             ...formData,
@@ -130,7 +118,7 @@ const editItem = ({ isVisible, setIsVisible, id }) => {
                                     type="checkbox"
                                     name="avaialability"
                                     id="availability"
-                                    value={formData.availability}
+                                    checked= {formData.availability || false}
                                     onChange={(event) => {
                                         if (event.target.checked) {
                                             setFormData({
@@ -152,6 +140,7 @@ const editItem = ({ isVisible, setIsVisible, id }) => {
                                     type="radio"
                                     name="veg_or_nonveg"
                                     value="veg"
+                                    checked={((formData.veg_or_nonveg=='veg') && true) || false}
                                     id="veg"
                                     onChange={(event) =>
                                         setFormData({
@@ -171,6 +160,7 @@ const editItem = ({ isVisible, setIsVisible, id }) => {
                                     name="veg_or_nonveg"
                                     value="non-veg"
                                     id="nonveg"
+                                    checked={((formData.veg_or_nonveg=='nonveg') && true) || false}
                                     onChange={(event) =>
                                         setFormData({
                                             ...formData,
@@ -191,7 +181,7 @@ const editItem = ({ isVisible, setIsVisible, id }) => {
                                     rows="8"
                                     className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 "
                                     placeholder="Item Description"
-                                    value={formData.description}
+                                    value={formData.description || ""}
                                     onChange={(event) =>
                                         setFormData({
                                             ...formData,

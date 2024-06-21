@@ -1,17 +1,25 @@
 import React, { useContext, useEffect, useState } from "react";
 import edit from "/edit.png";
-import rupee from "../utils/currencyFormatter.jsx";
-import api from "../api/api.jsx";
-import { capitalize } from "../utils/capitalize.jsx";
+import rupee from "../../utils/currencyFormatter.jsx";
+import api from "../../api/api.jsx";
+import { capitalize } from "../../utils/capitalize.jsx";
 import available from "/available.png";
 import notavailable from "/notavailable.png";
 import deleteImg from "/delete.png";
 import EditItem from "./editItem.jsx";
-import { menuState } from "../contexts/menuContext.jsx";
-import "./menuItems.modules.css";
+import { menuState } from "../../contexts/menuContext.jsx";
+import "./styles/menuItems.modules.css";
 
 const menuItems = () => {
     const [editForm, setEditForm] = useState(false);
+    const [edited, setEdited] = useState({
+        item: "",
+        price: 0.0,
+        availability: false,
+        veg_or_nonveg: "",
+        description: "",
+        category: "",
+    });
     const [items, setItems] = useState([]);
     const [render, setRender] = useContext(menuState);
     useEffect(() => {
@@ -25,6 +33,13 @@ const menuItems = () => {
         };
         getItems();
     }, [render]);
+    const tobeEdited = (id) => {
+        items.find((i) => {
+            if (i._id == id) {
+                setEdited(i)
+            }
+        });
+    };
     const handleDelete = async (id) => {
         try {
             console.log(id);
@@ -43,6 +58,7 @@ const menuItems = () => {
                     isVisible={editForm}
                     setIsVisible={setEditForm}
                     id={idi}
+                    editItem = {edited}
                 />
             )}
             {items.map((i, index) => (
@@ -77,6 +93,7 @@ const menuItems = () => {
                         onClick={() => {
                             setEditForm(true);
                             setId(i._id);
+                            tobeEdited(i._id);
                         }}
                     >
                         <img src={edit} alt="edit" className="h-10 w-10" />

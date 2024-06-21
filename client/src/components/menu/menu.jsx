@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import MenuItems from "./menuItems.jsx";
-import "./menu.modules.css";
+import "./styles/menu.modules.css";
 import plus from "/plus.png";
 import AddItem from "./addItem.jsx";
-import axios from "../api/api.jsx";
 
 const menu = () => {
     const [itemForm, setItemForm] = useState(false);

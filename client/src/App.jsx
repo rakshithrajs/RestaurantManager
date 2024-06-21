@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "./components/navbar.jsx";
-import Menu from "./components/menu.jsx";
+import Menu from "./components/menu/menu.jsx";
 import { menuState, categorydata } from "./contexts/menuContext.jsx";
 import axios from "./api/api.jsx";
 

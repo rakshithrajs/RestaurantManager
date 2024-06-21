@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
-import axios from "../api/api.jsx";
-import { categorydata, menuState } from "../contexts/menuContext.jsx";
+import axios from "../../api/api.jsx";
+import { categorydata, menuState } from "../../contexts/menuContext.jsx";
 
 const addItem = ({ isVisible, setIsVisible }) => {
     const [render, setRender] = useContext(menuState);
