@@ -8,10 +8,7 @@ const menu = () => {
     const [itemForm, setItemForm] = useState(false);
     return (
         <>
-            <AddItem
-                isVisible={itemForm}
-                setIsVisible={setItemForm}
-            />
+            <AddItem isVisible={itemForm} setIsVisible={setItemForm} />
             <main className=" bg-orange-300 w-2/3 rounded-lg m-auto mt-8">
                 <div className=" p-4 flex items-center justify-center gap-8">
                     <h1 className=" text-4xl font-bold text-center font-mono">
@@ -27,7 +24,7 @@ const menu = () => {
                     </button>
                 </div>
                 <div className="p-4">
-                    <MenuItems setIsVisible={setItemForm} />
+                    <MenuItems />
                 </div>
             </main>
         </>

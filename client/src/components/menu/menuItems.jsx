@@ -10,7 +10,7 @@ import EditItem from "./editItem.jsx";
 import { categorydata, menuState } from "../../contexts/menuContext.jsx";
 
 const menuItems = () => {
-    let categoryData = useContext(categorydata);
+    let category = useContext(categorydata);
     const [editForm, setEditForm] = useState(false);
     const [edited, setEdited] = useState({
         item: "",

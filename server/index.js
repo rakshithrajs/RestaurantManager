@@ -5,6 +5,7 @@ import bodyparser from "body-parser";
 import dotenv from "dotenv";
 import menuRoutes from "./Routes/menuRoutes.js";
 import categoryRoutes from "./Routes/categoryRoutes.js";
+import tableRoutes from "./Routes/tableRoutes.js";
 
 dotenv.config();
 
@@ -17,6 +18,7 @@ app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({ extended: true }));
 app.use("/menu", menuRoutes);
 app.use("/category", categoryRoutes);
+app.use("/tables", tableRoutes)
 app.get("/", (req, res) => res.send("Hello World!"));
 
 mongoose
