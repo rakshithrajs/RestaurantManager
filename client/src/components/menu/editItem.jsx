@@ -1,10 +1,10 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import axios from "../../api/api.jsx";
-import { categorydata, menuState } from "../../contexts/menuContext.jsx";
+import { categorydata, renderState } from "../../contexts/menuContext.jsx";
 
 const editItem = ({ isVisible, setIsVisible, id, editItem }) => {
     const [formData, setFormData] = useState(editItem);
-    const [render, setRender] = useContext(menuState);
+    const [render, setRender] = useContext(renderState);
     const category = useContext(categorydata);
     const handleSubmit = async (event) => {
         event.preventDefault();

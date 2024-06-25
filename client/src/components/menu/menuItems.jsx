@@ -7,7 +7,7 @@ import available from "/available.png";
 import notavailable from "/notavailable.png";
 import deleteImg from "/delete.png";
 import EditItem from "./editItem.jsx";
-import { categorydata, menuState } from "../../contexts/menuContext.jsx";
+import { categorydata, renderState } from "../../contexts/menuContext.jsx";
 
 const menuItems = () => {
     let category = useContext(categorydata);
@@ -20,7 +20,7 @@ const menuItems = () => {
         category: "",
     });
     const [items, setItems] = useState([]);
-    const [render, setRender] = useContext(menuState);
+    const [render, setRender] = useContext(renderState);
     useEffect(() => {
         const getItems = async () => {
             try {

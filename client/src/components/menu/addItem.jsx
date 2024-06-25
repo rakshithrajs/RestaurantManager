@@ -1,9 +1,9 @@
 import React, { useContext, useState } from "react";
 import axios from "../../api/api.jsx";
-import { categorydata, menuState } from "../../contexts/menuContext.jsx";
+import { categorydata, renderState } from "../../contexts/menuContext.jsx";
 
 const addItem = ({ isVisible, setIsVisible }) => {
-    const [render, setRender] = useContext(menuState);
+    const [render, setRender] = useContext(renderState);
     const category = useContext(categorydata)
     const [formData, setFormData] = useState({
         item: "",
@@ -40,7 +40,7 @@ const addItem = ({ isVisible, setIsVisible }) => {
                         Add a new product
                     </h2>
                     <form
-                        action="post"
+                        method="post"
                         className=" p-4"
                         onSubmit={handleSubmit}
                         autoComplete="off"

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import Navbar from "./components/navbar.jsx";
 import Menu from "./components/menu/menu.jsx";
-import Tables from "./components/tables/tables.jsx"
-import { menuState, categorydata } from "./contexts/menuContext.jsx";
+import Tables from "./components/tables/tables.jsx";
+import { renderState, categorydata } from "./contexts/menuContext.jsx";
 import axios from "./api/api.jsx";
 import { Route, Routes } from "react-router";
 
@@ -30,14 +30,21 @@ const App = () => {
                 <Route
                     path="/"
                     element={
-                        <menuState.Provider value={[render, setRender]}>
+                        <renderState.Provider value={[render, setRender]}>
                             <categorydata.Provider value={category}>
                                 <Menu />
                             </categorydata.Provider>
-                        </menuState.Provider>
+                        </renderState.Provider>
                     }
                 />
-                <Route path="/tables" element={<Tables />} />
+                <Route
+                    path="/tables"
+                    element={
+                        <renderState.Provider value={[render,setRender]}>
+                            <Tables />
+                        </renderState.Provider>
+                    }
+                />
             </Routes>
         </>
     );
