@@ -4,14 +4,12 @@ import Menu from "./components/menu/menu.jsx";
 import Tables from "./components/tables/tables.jsx";
 import { renderState, categorydata } from "./contexts/menuContext.jsx";
 import axios from "./api/api.jsx";
-import { Route, Routes } from "react-router";
+import { Route, Routes, useNavigate } from "react-router";
+import PlaceOrder from "./components/orders/placeOrder.jsx";
 
 const App = () => {
     const [render, setRender] = useState(0);
-    const [category, setCategory] = useState({
-        id: "",
-        name: "",
-    });
+    const [category, setCategory] = useState([]);
     useEffect(() => {
         const fetchCategories = async () => {
             try {
@@ -40,8 +38,18 @@ const App = () => {
                 <Route
                     path="/tables"
                     element={
-                        <renderState.Provider value={[render,setRender]}>
+                        <renderState.Provider value={[render, setRender]}>
                             <Tables />
+                        </renderState.Provider>
+                    }
+                />
+                <Route
+                    path="/orders/:id"
+                    element={
+                        <renderState.Provider value={[render, setRender]}>
+                            <categorydata.Provider value={category}>
+                                <PlaceOrder />
+                            </categorydata.Provider>
                         </renderState.Provider>
                     }
                 />
