@@ -12,7 +12,6 @@ const table = ({ table, isOpen, setIsOpen }) => {
             try {
                 const orders = await api.get("/orders");
                 setOrder(orders.data);
-                console.log(orders.data);
             } catch (error) {
                 console.log(error.message);
             }
@@ -29,7 +28,7 @@ const table = ({ table, isOpen, setIsOpen }) => {
             console.log(error.message);
         }
     };
-    const [placeOrder, setPlaceOrder] = useState(false);
+    console.log(order)
     if (!isOpen) return null;
     return (
         <div className=" fixed inset-0 bg-teal-100 bg-opacity-60 backdrop-blur-md flex justify-center items-center">
@@ -48,10 +47,9 @@ const table = ({ table, isOpen, setIsOpen }) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {order.map(() => {
+                        {order.map((order) => {
                             <tr key={order._id} className="text-[1.5vw]">
-                                <td>{order.itemName}</td>
-                                <td>{order.quantity}</td>
+                                <td>{order.itemId.item}</td>
                                 <td>{order.status}</td>
                             </tr>;
                         })}

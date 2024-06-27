@@ -7,6 +7,7 @@ import available from "/available.png";
 import notavailable from "/notavailable.png";
 import deleteImg from "/delete.png";
 import EditItem from "./editItem.jsx";
+import plus from "/plus.png";
 import { categorydata, renderState } from "../../contexts/menuContext.jsx";
 
 const menuItems = ({ table }) => {
@@ -18,6 +19,10 @@ const menuItems = ({ table }) => {
         veg_or_nonveg: "",
         description: "",
         category: "",
+    });
+    const [order, setOrder] = useState({
+        itemId: "",
+        tableId: "",
     });
     const [items, setItems] = useState([]);
     const [render, setRender] = useContext(renderState);
@@ -32,6 +37,19 @@ const menuItems = ({ table }) => {
         };
         getItems();
     }, [render]);
+    useEffect(() => {
+        const addOrders = async () => {
+            try {
+                const response = await api.post("/orders", order);
+                console.log(order);
+                console.log(response.data);
+            } catch (error) {
+                console.log(error.message);
+            }
+            setRender(render + 1);
+        };
+        if (order.itemId !== "") addOrders();
+    }, [order]);
     const tobeEdited = (id) => {
         items.find((i) => {
             if (i._id == id) {
@@ -50,10 +68,6 @@ const menuItems = ({ table }) => {
         setRender(render + 1);
     };
     const [idi, setId] = useState(0);
-    const [order, setOrder] = useState([]);
-    const quantRef = useRef(0);
-    console.log(order);
-    // console.log(quantRef.current.valueOf());
     if (!table) {
         return (
             <>
@@ -171,8 +185,7 @@ const menuItems = ({ table }) => {
                                     <th className=" w-fit">Name</th>
                                     <th>Price</th>
                                     <th>V/N-V</th>
-                                    <th>Quantity</th>
-                                    <th>Notes</th>
+                                    <th>Add</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -212,58 +225,22 @@ const menuItems = ({ table }) => {
                                                     />
                                                 )}
                                             </td>
-                                            <td className=" flex justify-center items-center">
-                                                <input
-                                                    type="nummber"
-                                                    name="quantity"
-                                                    id="qyantity"
-                                                    autoComplete="off"
-                                                    ref={quantRef}
-                                                    onChange={(event) => {
-                                                        quantRef.current =
-                                                            event.target.value;
-                                                    }}
-                                                    className=" bg-transparent border border-orange-500 text-center max-h-[2.7vw] w-[3vw] mt-[1.3vw] focus:ring-2focus:ring-indigo-600 focus:outline-none"
-                                                />
-                                            </td>
                                             <td>
-                                                <textarea
-                                                    name="notes"
-                                                    id="notes"
-                                                    cols={10}
-                                                    rows={1}
-                                                    className=" bg-transparent border-orange-500"
-                                                    //dont append repeated data
-                                                    onBlur={(event) => {
-                                                        const existingItemIndex =
-                                                            order.findIndex(
-                                                                (item) =>
-                                                                    item.itemId ===
-                                                                    j.itemId
-                                                            );
-                                                        if (existingItemIndex !== -1) {
-                                                            const orderData = order.find((item)=> item.itemId === j.itemId)
-                                                            orderData.notes = event.target.value
-                                                            orderData.quantity = quantRef.current
-                                                        } else {
-                                                            const orderData = [
-                                                                ...order,
-                                                                {
-                                                                    tableId:
-                                                                        table._id,
-                                                                    itemId: j._id,
-                                                                    quantity:
-                                                                        quantRef.current,
-                                                                    status: "confirmed",
-                                                                    notes: event
-                                                                        .target
-                                                                        .value,
-                                                                },
-                                                            ];
-                                                            setOrder(orderData);
-                                                        }
+                                                <button
+                                                    onClick={() => {
+                                                        const newOrder = {
+                                                            itemId: j._id,
+                                                            tableId: table._id,
+                                                        };
+                                                        setOrder(newOrder);
                                                     }}
-                                                />
+                                                    className=" m-auto ml-[1vw] size-[2vw]"
+                                                >
+                                                    <img
+                                                        src={plus}
+                                                        alt="Add to cart"
+                                                    />
+                                                </button>
                                             </td>
                                         </tr>
                                     ))}

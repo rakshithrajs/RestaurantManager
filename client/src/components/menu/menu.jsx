@@ -21,8 +21,8 @@ const menu = ({ id }) => {
     const [itemForm, setItemForm] = useState(false);
     return (
         <>
+            <main className={!id ? " bg-orange-300 rounded-lg w-2/3 m-auto mt-[2vw]" : " bg-orange-300 w-full h-min rounded-lg ml-[2vw] mt-[2vw]"}>
             <AddItem isVisible={itemForm} setIsVisible={setItemForm} />
-            <main className=" bg-orange-300 w-2/3 rounded-lg m-auto mt-8">
                 <div className=" p-4 flex items-center justify-center gap-8">
                     <h1 className=" text-4xl font-bold text-center font-mono">
                         Menu

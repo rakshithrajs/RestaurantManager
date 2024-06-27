@@ -12,7 +12,6 @@ const orderSchema = new Schema({
     },
     quantity: {
         type: Number,
-        required: true,
     },
     status: {
         type: String,
@@ -23,21 +22,8 @@ const orderSchema = new Schema({
             "delivered",
             "cancelled",
         ],
-        default: "cocnfirmed",
-    },
-    notes: {
-        type: String,
+        default: "confirmed",
     },
 });
 
 export const orderModel = mongoose.model("orderModel", orderSchema);
-
-async function printItemName(orderId) {
-    const order = await orderModel.findById(orderId).populate("itemId");
-    return order.itemId.item;
-}
-
-async function printTableNumber(orderId) {
-    const order = await orderModel.findById(orderId).populate("tableId");
-    return order.tableId.tableNo;
-}
