@@ -15,7 +15,7 @@ const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
-app.use(bodyparser.json());
+app.use(express.json());
 app.use(bodyparser.urlencoded({ extended: true }));
 app.use("/menu", menuRoutes);
 app.use("/category", categoryRoutes);
@@ -35,4 +35,5 @@ mongoose
     })
     .catch((err) => {
         console.log(err);
+        process.exit(1)
     });

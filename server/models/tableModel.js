@@ -2,10 +2,6 @@ import mongoose, { model } from "mongoose";
 const { Schema } = mongoose;
 import moment from "moment";
 
-const current_time = setInterval(() => {
-    return moment().format("HH:MM:SS");
-}, 1000);
-
 const tableSchema = new Schema(
     {
         tableNo: {
@@ -15,6 +11,7 @@ const tableSchema = new Schema(
         },
         customerName: {
             type: String,
+            trim: true,
         },
         occupants: {
             type: Number,

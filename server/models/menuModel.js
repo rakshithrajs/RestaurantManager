@@ -19,6 +19,7 @@ const menuSchema = new Schema({
     },
     description: {
         type: String,
+        trim: true
     },
     category: [
         {

@@ -7,6 +7,8 @@ import api from "../../api/api.jsx";
 
 const menu = ({ id }) => {
     const [table, setTable] = useState();
+    const [itemForm, setItemForm] = useState(false);
+    
     useEffect(() => {
         const getTable = async () => {
             try {
@@ -18,7 +20,7 @@ const menu = ({ id }) => {
         };
         getTable();
     }, []);
-    const [itemForm, setItemForm] = useState(false);
+    
     return (
         <>
             <main className={!id ? " bg-orange-300 rounded-lg w-2/3 m-auto mt-[2vw]" : " bg-orange-300 w-full h-min rounded-lg ml-[2vw] mt-[2vw]"}>

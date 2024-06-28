@@ -7,6 +7,10 @@ import axios from "./api/api.jsx";
 import { Route, Routes, useNavigate } from "react-router";
 import PlaceOrder from "./components/orders/placeOrder.jsx";
 
+//TODO: implement pagination in menu and order
+//TODO: implement search in menu and order
+//TODO: implement order details page and should be to change status
+//TODO: implement UI for adding category
 const App = () => {
     const [render, setRender] = useState(0);
     const [category, setCategory] = useState([]);
@@ -24,36 +28,15 @@ const App = () => {
     return (
         <>
             <Navbar />
-            <Routes>
-                <Route
-                    path="/"
-                    element={
-                        <renderState.Provider value={[render, setRender]}>
-                            <categorydata.Provider value={category}>
-                                <Menu />
-                            </categorydata.Provider>
-                        </renderState.Provider>
-                    }
-                />
-                <Route
-                    path="/tables"
-                    element={
-                        <renderState.Provider value={[render, setRender]}>
-                            <Tables />
-                        </renderState.Provider>
-                    }
-                />
-                <Route
-                    path="/orders/:id"
-                    element={
-                        <renderState.Provider value={[render, setRender]}>
-                            <categorydata.Provider value={category}>
-                                <PlaceOrder />
-                            </categorydata.Provider>
-                        </renderState.Provider>
-                    }
-                />
-            </Routes>
+            <renderState.Provider value={[render, setRender]}>
+                <categorydata.Provider value={category}>
+                    <Routes>
+                        <Route path="/" element={<Menu />} />
+                        <Route path="/tables" element={<Tables />} />
+                        <Route path="/orders/:id" element={<PlaceOrder />} />
+                    </Routes>
+                </categorydata.Provider>
+            </renderState.Provider>
         </>
     );
 };

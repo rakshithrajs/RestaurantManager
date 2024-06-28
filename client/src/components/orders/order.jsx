@@ -1,5 +1,4 @@
 import { useContext, useEffect, useState } from "react";
-import del from "/delete.png";
 import api from "../../api/api.jsx";
 import { renderState } from "../../contexts/menuContext.jsx";
 import { MdDeleteOutline } from "react-icons/md";
@@ -70,19 +69,6 @@ const order = ({ id }) => {
                         <tr className=" border-t border-gray-200"></tr>
                     )}
                 </tbody>
-                <tfoot className="flex items-center flex-col justify-center mt-8">
-                    <tr>
-                        <td
-                            colSpan={2}
-                            className="flex justify-center items-center"
-                        >
-                            <button className=" rounded-sm p-[0.6vw] gap-1 text-center justify-center items-center bg-indigo-600 text-white flex transition-all duration-500 hover:bg-indigo-700">
-                                <p>Place Order</p>
-                                &gt;
-                            </button>
-                        </td>
-                    </tr>
-                </tfoot>
             </table>
         </section>
     );

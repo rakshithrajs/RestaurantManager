@@ -1,14 +1,16 @@
-import mongoose, { mongo } from "mongoose";
+import mongoose from "mongoose";
 const { Schema } = mongoose;
 
 const orderSchema = new Schema({
     tableId: {
         type: Schema.Types.ObjectId,
         ref: "tableModel",
+        required: true,
     },
     itemId: {
         type: Schema.Types.ObjectId,
         ref: "menuModel",
+        required: true,
     },
     quantity: {
         type: Number,
