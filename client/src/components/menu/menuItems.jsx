@@ -169,6 +169,14 @@ const menuItems = ({ table }) => {
             </>
         );
     } else {
+        let filtered
+        if (table.veg_or_nonveg === "both") {
+            filtered = items;
+        } else {
+            filtered = items.filter(
+                (l) => l.veg_or_nonveg === table.veg_or_nonveg
+            );
+        }
         return (
             <>
                 <table className=" w-full">
@@ -189,7 +197,7 @@ const menuItems = ({ table }) => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {items
+                                {filtered
                                     .filter((j) => j.category[0] === i._id)
                                     .map((j, ind) => (
                                         <tr

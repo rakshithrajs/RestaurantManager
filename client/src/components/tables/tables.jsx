@@ -63,7 +63,7 @@ const tables = () => {
                             setTableOpen(!isTableOpen);
                             setTableData(t);
                         }}
-                        className="space-y-[1vw] flex flex-col justify-center items-center cursor-pointer size-[200px] rounded-full bg-sky-500 bg-opacity-55 border border-black transition-all hover:bg-opacity-65 hover:scale-105 hover:font-extrabold"
+                        className="space-y-[1vw] flex flex-col justify-center items-center cursor-pointer size-[200px] rounded-full bg-sky-500 bg-opacity-55 border border-black transition-all active:bg-opacity-65 active:scale-105 active:font-extrabold"
                     >
                         <h1 className="text-3xl font-bold ">{t.tableNo}</h1>
                         <div> {!t.waitingTime? "Just Now" : `arrived ${t.waitingTime} ago`} </div>

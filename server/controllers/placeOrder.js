@@ -25,11 +25,38 @@ export const addOrder = async (req, res) => {
     }
 };
 
+export const getOrderByTable = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const orders = await orderModel
+            .find({ tableId: id })
+            .populate({
+                path:"itemId", 
+                select: "item price"})
+            .populate("tableId", "tableNo");
+        res.status(200).json(orders);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
 export const deleteOrder = async (req, res) => {
     try {
         const { id } = req.params;
         const order = await orderModel.findByIdAndDelete(id);
         res.status(200).json(order);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
+export const deleteAll = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const deleteOrders = await orderModel.deleteMany({
+            tableId: { _id: id },
+        });
+        res.status(200).json(deleteOrders);
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
