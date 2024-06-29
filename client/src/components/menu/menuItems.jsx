@@ -11,7 +11,7 @@ import plus from "/plus.png";
 import { categorydata, renderState } from "../../contexts/menuContext.jsx";
 import { RiDeleteBin6Line } from "react-icons/ri";
 
-const menuItems = ({ table }) => {
+const menuItems = ({ table, set }) => {
     const category = useContext(categorydata);
     const [editForm, setEditForm] = useState(false);
     const [edited, setEdited] = useState({
@@ -39,7 +39,6 @@ const menuItems = ({ table }) => {
         };
         getItems();
     }, [render]);
-    console.log(items);
     useEffect(() => {
         const addOrders = async () => {
             try {
@@ -74,13 +73,19 @@ const menuItems = ({ table }) => {
         try {
             const response = await api.delete(`/category/${id}`);
             const res = await api.delete(`/menu/all/${id}`);
-            console.log(res.data)
+            console.log(res.data);
             console.log(response.data);
-            setRender(render+1)
+            setRender(render + 1);
         } catch (error) {
             console.log(error.message);
         }
     };
+    let search;
+    if (set) {
+        search = items.filter((o) => o.item.toLowerCase().indexOf(set) > -1);
+    } else {
+        search = items;
+    }
     if (!table) {
         return (
             <>
@@ -116,7 +121,7 @@ const menuItems = ({ table }) => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {items
+                                {search
                                     .filter((l) => l.category === i._id)
                                     .map((j, ind) => (
                                         <tr
@@ -191,9 +196,9 @@ const menuItems = ({ table }) => {
     } else {
         let filtered;
         if (table.veg_or_nonveg === "both") {
-            filtered = items;
+            filtered = search;
         } else {
-            filtered = items.filter(
+            filtered = search.filter(
                 (l) => l.veg_or_nonveg === table.veg_or_nonveg
             );
         }

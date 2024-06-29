@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef, useContext } from "react";
 import api from "../../api/api.jsx";
 import { renderState } from "../../contexts/menuContext.jsx";
+import _ from "lodash";
 
 const allOrders = () => {
     const [render, setRender] = useContext(renderState);
@@ -18,21 +19,17 @@ const allOrders = () => {
         };
         fetchOrder();
     }, [render]);
-    const [newOrder, setNewOrder] = useState({});
-    useEffect(() => {
-        console.log("new order", newOrder);
-    }, [newOrder]);
     const handleChange = async (id, orderData) => {
         const updated = orders.map((o) =>
             o._id == id ? { ...o, status: orderData.status } : o
         );
         console.log(updated);
         try {
-            setRender(render + 1);
             const response = await api.put(`/orders/${id}`, {
                 status: orderData.status,
             });
             setOrders(updated);
+            setRender(render + 1);
             console.log(response.data);
         } catch (error) {
             console.log(error.message);

@@ -8,6 +8,7 @@ import { IoMdAddCircleOutline } from "react-icons/io";
 import AddCategory from "./addCategory.jsx";
 
 const menu = ({ id }) => {
+    const [items, setItems] = useState();
     const [table, setTable] = useState();
     const [itemForm, setItemForm] = useState(false);
     const [categoryForm, setCategoryForm] = useState(false);
@@ -30,8 +31,8 @@ const menu = ({ id }) => {
             <main
                 className={
                     !id
-                        ? " bg-orange-300 rounded-lg w-2/3 m-auto mt-[2vw]"
-                        : " bg-orange-300 w-full h-min rounded-lg ml-[2vw] mt-[2vw]"
+                        ? " bg-orange-300 rounded-lg w-2/3 m-auto mt-[2vw] flex flex-col"
+                        : " bg-orange-300 w-full h-min rounded-lg ml-[2vw] mt-[2vw] flex flex-col"
                 }
             >
                 <AddCategory
@@ -70,8 +71,16 @@ const menu = ({ id }) => {
                         </>
                     )}
                 </div>
+                <input
+                    type="text"
+                    placeholder="Search"
+                    onChange={(event)=>{
+                        setItems(event.target.value)
+                    }}
+                    className=" bg-transparent outline-none border-b-2 border-0 border-black text-black active:border-black focus:border-black placeholder:text-black mx-[1vw] rounded-full"
+                />
                 <div className="p-4">
-                    <MenuItems table={table} />
+                    <MenuItems table={table} set={items} />
                 </div>
             </main>
         </>
