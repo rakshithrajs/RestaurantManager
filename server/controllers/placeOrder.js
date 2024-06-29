@@ -13,6 +13,19 @@ export const getOrders = async (req, res) => {
     }
 };
 
+export const getOneOrder = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const order = await orderModel
+            .find({ _id: id })
+            .populate("itemId", "item")
+            .populate("tableId", "tableNo");
+        res.status(200).json(order);
+    } catch (error) {
+        res.json({ message: error.message });
+    }
+};
+
 export const addOrder = async (req, res) => {
     try {
         const order = req.body;

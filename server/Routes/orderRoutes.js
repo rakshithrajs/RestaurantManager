@@ -7,11 +7,12 @@ import {
     deleteOrder,
     deleteAll,
     getOrderByTable,
-    updateOrder
+    updateOrder,
+    getOneOrder,
 } from "../controllers/placeOrder.js";
 
 router.route("/").get(getOrders).post(addOrder);
-router.route("/:id").delete(deleteOrder).put(updateOrder);
+router.route("/:id").get(getOneOrder).delete(deleteOrder).put(updateOrder);
 router.delete("/all/:id", deleteAll);
 router.get("/table/:id", getOrderByTable);
 

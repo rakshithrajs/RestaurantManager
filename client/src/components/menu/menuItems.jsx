@@ -218,7 +218,7 @@ const menuItems = ({ table }) => {
                             </thead>
                             <tbody>
                                 {filtered
-                                    .filter((j) => j.category[0] === i._id)
+                                    .filter((j) => j.category === i._id)
                                     .map((j, ind) => (
                                         <tr
                                             key={j._id}

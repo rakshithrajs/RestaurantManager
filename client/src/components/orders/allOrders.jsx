@@ -27,19 +27,15 @@ const allOrders = () => {
             o._id == id ? { ...o, status: orderData.status } : o
         );
         console.log(updated);
-        setOrders(updated);
         try {
             setRender(render + 1);
+            const response = await api.put(`/orders/${id}`, {
+                status: orderData.status,
+            });
+            setOrders(updated);
             console.log(response.data);
         } catch (error) {
             console.log(error.message);
-        }
-        if(orderData.status === "delivered" || orderData.status === "cancelled"){
-            try {
-                const deleteOrder = await api.delete()
-            } catch (error) {
-                
-            }
         }
     };
     // console.log(newOrder);
@@ -127,14 +123,28 @@ const allOrders = () => {
                                                     : "white",
                                         }}
                                     >
-                                        <option className=" bg-white text-black" value="confirmed">
+                                        <option
+                                            className=" bg-white text-black"
+                                            value="confirmed"
+                                        >
                                             confirmed
                                         </option>
-                                        <option className=" bg-white text-black" value="cancelled">
-                                            cancelled   
+                                        <option
+                                            className=" bg-white text-black"
+                                            value="cancelled"
+                                        >
+                                            cancelled
                                         </option>
-                                        <option className=" bg-white text-black" value="cooking">cooking</option>
-                                        <option className=" bg-white text-black" value="delivered">
+                                        <option
+                                            className=" bg-white text-black"
+                                            value="cooking"
+                                        >
+                                            cooking
+                                        </option>
+                                        <option
+                                            className=" bg-white text-black"
+                                            value="delivered"
+                                        >
                                             delivered
                                         </option>
                                     </select>
