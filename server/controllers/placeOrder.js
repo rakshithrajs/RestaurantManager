@@ -31,8 +31,9 @@ export const getOrderByTable = async (req, res) => {
         const orders = await orderModel
             .find({ tableId: id })
             .populate({
-                path:"itemId", 
-                select: "item price"})
+                path: "itemId",
+                select: "item price",
+            })
             .populate("tableId", "tableNo");
         res.status(200).json(orders);
     } catch (error) {
@@ -57,6 +58,19 @@ export const deleteAll = async (req, res) => {
             tableId: { _id: id },
         });
         res.status(200).json(deleteOrders);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
+export const updateOrder = async (req, res) => {
+    const { id } = req.params;
+    const order = req.body;
+    try {
+        const updatedOrder = await orderModel.findByIdAndUpdate(id, order, {
+            new: true,
+        });
+        res.status(200).json(updatedOrder);
     } catch (error) {
         res.status(400).json({ message: error.message });
     }

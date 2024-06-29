@@ -9,7 +9,7 @@ const navbar = () => {
             <Link to={"/"} className=" font-bold text-2xl cursor-pointer transition-all hover:scale-110">Menu</Link>
             <Link to={"/tables"} className=" font-bold text-2xl cursor-pointer transition-all hover:scale-110">Tables</Link>
             <a className=" font-bold text-2xl cursor-pointer transition-all hover:scale-110">Sales</a>
-            <a className=" font-bold text-2xl cursor-pointer transition-all hover:scale-110">Orders</a>
+            <Link to={"/allorders"} className=" font-bold text-2xl cursor-pointer transition-all hover:scale-110">Orders</Link>
         </nav>
     );
 };

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import edit from "/edit.png";
 import rupee from "../../utils/currencyFormatter.jsx";
 import api from "../../api/api.jsx";
@@ -9,6 +9,7 @@ import deleteImg from "/delete.png";
 import EditItem from "./editItem.jsx";
 import plus from "/plus.png";
 import { categorydata, renderState } from "../../contexts/menuContext.jsx";
+import { RiDeleteBin6Line } from "react-icons/ri";
 
 const menuItems = ({ table }) => {
     const category = useContext(categorydata);
@@ -26,6 +27,7 @@ const menuItems = ({ table }) => {
     });
     const [items, setItems] = useState([]);
     const [render, setRender] = useContext(renderState);
+    const [idi, setId] = useState(0);
     useEffect(() => {
         const getItems = async () => {
             try {
@@ -37,6 +39,7 @@ const menuItems = ({ table }) => {
         };
         getItems();
     }, [render]);
+    console.log(items);
     useEffect(() => {
         const addOrders = async () => {
             try {
@@ -67,7 +70,17 @@ const menuItems = ({ table }) => {
         }
         setRender(render + 1);
     };
-    const [idi, setId] = useState(0);
+    const handleDeleteCategory = async (id) => {
+        try {
+            const response = await api.delete(`/category/${id}`);
+            const res = await api.delete(`/menu/all/${id}`);
+            console.log(res.data)
+            console.log(response.data);
+            setRender(render+1)
+        } catch (error) {
+            console.log(error.message);
+        }
+    };
     if (!table) {
         return (
             <>
@@ -82,8 +95,15 @@ const menuItems = ({ table }) => {
                         <React.Fragment key={index}>
                             <thead key={i._id}>
                                 <tr>
-                                    <th className="px-4 text-2xl" colSpan={3}>
-                                        {i.name}
+                                    <th className="px-4 text-2xl" colSpan={6}>
+                                        <div className=" flex justify-center items-center gap-[2vw]">
+                                            {i.name}
+                                            <RiDeleteBin6Line
+                                                onClick={() => {
+                                                    handleDeleteCategory(i._id);
+                                                }}
+                                            />
+                                        </div>
                                     </th>
                                 </tr>
                                 <tr className="text-[1.5vw] rounded-md transition-all duration-100">
@@ -97,7 +117,7 @@ const menuItems = ({ table }) => {
                             </thead>
                             <tbody>
                                 {items
-                                    .filter((j) => j.category[0] === i._id)
+                                    .filter((l) => l.category === i._id)
                                     .map((j, ind) => (
                                         <tr
                                             key={j._id}
@@ -169,7 +189,7 @@ const menuItems = ({ table }) => {
             </>
         );
     } else {
-        let filtered
+        let filtered;
         if (table.veg_or_nonveg === "both") {
             filtered = items;
         } else {

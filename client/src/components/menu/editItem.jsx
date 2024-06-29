@@ -1,11 +1,14 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import axios from "../../api/api.jsx";
 import { categorydata, renderState } from "../../contexts/menuContext.jsx";
 
 const editItem = ({ isVisible, setIsVisible, id, editItem }) => {
-    const [formData, setFormData] = useState(editItem);
+    const [formData, setFormData] = useState();
     const [render, setRender] = useContext(renderState);
     const category = useContext(categorydata);
+    useEffect(() => {
+        setFormData(editItem);
+    }, [editItem]);
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
@@ -118,7 +121,7 @@ const editItem = ({ isVisible, setIsVisible, id, editItem }) => {
                                     type="radio"
                                     name="veg_or_nonveg"
                                     value="veg"
-                                    checked={formData.veg_or_nonveg=='veg'}
+                                    checked={formData.veg_or_nonveg == "veg"}
                                     id="veg"
                                     onChange={(event) =>
                                         setFormData({
@@ -138,7 +141,9 @@ const editItem = ({ isVisible, setIsVisible, id, editItem }) => {
                                     name="veg_or_nonveg"
                                     value="non-veg"
                                     id="nonveg"
-                                    checked={formData.veg_or_nonveg=='non-veg'}
+                                    checked={
+                                        formData.veg_or_nonveg == "non-veg"
+                                    }
                                     onChange={(event) =>
                                         setFormData({
                                             ...formData,

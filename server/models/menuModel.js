@@ -19,14 +19,12 @@ const menuSchema = new Schema({
     },
     description: {
         type: String,
-        trim: true
+        trim: true,
     },
-    category: [
-        {
-            type: Schema.Types.ObjectId,
-            ref: "categoryModel",
-        },
-    ],
+    category: {
+        type: Schema.Types.ObjectId,
+        ref: "categoryModel",
+    },
 });
 
 export const menuModel = new model("menuModel", menuSchema);
