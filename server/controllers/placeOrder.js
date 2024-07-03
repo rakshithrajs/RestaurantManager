@@ -2,14 +2,44 @@ import { orderModel } from "../models/orderModel.js";
 
 export const getOrders = async (req, res) => {
     try {
-        const orders = await orderModel
-            .find()
-            .populate("itemId", "item")
-            .populate("tableId", "tableNo");
-        res.status(200).json(orders);
+        const groupedOrders = await orderModel.aggregate([
+            {
+                $lookup: {
+                    from: "menumodels",
+                    localField: "itemId",
+                    foreignField: "_id",
+                    as: "itemDetails",
+                },
+            },
+            {
+                $lookup: {
+                    from: "tablemodels",
+                    localField: "tableId",
+                    foreignField: "_id",
+                    as: "tableDetails",
+                },
+            },
+            {
+                $unwind: "$itemDetails",
+                $unwind: "$tableDetails",
+            },
+            {
+                $group: {
+                    _id: {
+                        itemId: "$itemId",
+                        tableId: "$tableId",
+                    },
+                    orderId: {$first: "$_id"},
+                    count: { $sum: 1 },
+                    tableNo: { $first: "$tableDetails.tableNo" },
+                    itemName: { $first: "$itemDetails.item" },
+                    status: {$first: "$status"},
+                },
+            },
+        ]);
+        res.status(200).json(groupedOrders);
     } catch (error) {
         res.status(400).json({ message: error.message });
-        console.log(error.message);
     }
 };
 

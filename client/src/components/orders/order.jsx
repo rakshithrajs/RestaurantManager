@@ -38,6 +38,9 @@ const order = ({ id }) => {
                             Product
                         </th>
                         <th className=" px-[3vw] text-md text-gray-500">
+                            Quantity
+                        </th>
+                        <th className=" px-[3vw] text-md text-gray-500">
                             Remove
                         </th>
                     </tr>
@@ -45,19 +48,20 @@ const order = ({ id }) => {
                 <tbody>
                     {order ? (
                         order
-                            .filter((or) => or.tableId._id === id)
+                            .filter((or) => or._id.tableId === id)
                             .map((o) => (
                                 <tr
-                                    key={o._id}
+                                    key={o.orderId}
                                     className=" border-t border-gray-200"
                                 >
                                     <td className=" py-[1vw] text-center text-md">
-                                        {o.itemId ? o.itemId.item : ""}
+                                        {o._id.itemId ? o.itemName : ""}
                                     </td>
+                                    <td className=" py-[1vw] text-center text-md">{o.count}</td>
                                     <td className=" px-[3vw]">
                                         <button
                                             onClick={() => {
-                                                deleteOrder(o._id);
+                                                deleteOrder(o.orderId);
                                             }}
                                         >
                                             <MdDeleteOutline className="m-auto ml-[1vw] size-[2vw] text-red-700" />

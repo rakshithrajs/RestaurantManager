@@ -21,7 +21,7 @@ const allOrders = () => {
     }, [render]);
     const handleChange = async (id, orderData) => {
         const updated = orders.map((o) =>
-            o._id == id ? { ...o, status: orderData.status } : o
+            o.orderId == id ? { ...o, status: orderData.status } : o
         );
         console.log(updated);
         try {
@@ -57,27 +57,36 @@ const allOrders = () => {
                             scope="col"
                             className="px-[2vw] py-[1vw] font-medium text-gray-500 uppercase "
                         >
-                            Status
+                            Item Name
+                        </th>
+                        <th
+                            scope="col"
+                            className="px-[2vw] py-[1vw] font-medium text-gray-500 uppercase"
+                        >
+                            Quantity
                         </th>
                         <th
                             scope="col"
                             className="px-[2vw] py-[1vw] font-medium text-gray-500 uppercase "
                         >
-                            Item Name
+                            Status
                         </th>
                     </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
                     {orders.map((o, index) => (
-                        <tr key={o._id}>
+                        <tr key={o.orderId}>
                             <td className="px-[2vw] py-[1vw] flex items-center justify-center font-medium text-gray-900">
                                 {index + 1}
                             </td>
                             <td className="px-[2vw] py-[1vw] text-center">
-                                {o.tableId.tableNo}
+                                {o.tableNo}
                             </td>
                             <td className="px-[2vw] py-[1vw] text-center text-gray-500">
-                                {o.itemId.item}
+                                {o.itemName}
+                            </td>
+                            <td className="px-[2vw] py-[1vw] text-center text-gray-500">
+                                {o.count}
                             </td>
                             <td className="flex justify-center">
                                 <span className="px-[1vw] py-[0.5vw] inline-flex text-xs font-semibold uppercase rounded-full">
@@ -88,13 +97,13 @@ const allOrders = () => {
                                         onChange={(event) => {
                                             status.current = event.target.value;
                                             const data = orders.find(
-                                                (or) => or._id == o._id
+                                                (or) => or.orderId == o.orderId
                                             );
                                             const d = {
                                                 ...data,
                                                 status: event.target.value,
                                             };
-                                            handleChange(o._id, d);
+                                            handleChange(o.orderId, d);
                                         }}
                                         className={`border-none flex justify-center items-center uppercase rounded-full cursor-pointer px-[0.6vw] py-[0.2vw]`}
                                         style={{

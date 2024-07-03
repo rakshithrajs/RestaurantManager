@@ -12,9 +12,6 @@ const orderSchema = new Schema({
         ref: "menuModel",
         required: true,
     },
-    quantity: {
-        type: Number,
-    },
     status: {
         type: String,
         enum: [
