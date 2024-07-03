@@ -11,8 +11,8 @@ const table = ({ table, isOpen, setIsOpen }) => {
     useEffect(() => {
         const fetchOrders = async () => {
             try {
-                if (table._id) {
-                    const orders = await api.get(`/orders/table/${table._id}`);
+                if (table) {
+                    const orders = await api.get(`/orders`);
                     setTableData(orders.data);
                     console.log(orders.data);
                 }
@@ -43,12 +43,17 @@ const table = ({ table, isOpen, setIsOpen }) => {
                     Customer Name: {table.customerName}
                 </h1>
                 <section>
-                    <legend className="text-[1.5vw] w-full text-center font-bold">Order Details</legend>
+                    <legend className="text-[1.5vw] w-full text-center font-bold">
+                        Order Details
+                    </legend>
                     <table className=" w-full text-sm text-left rtl:text-right ">
                         <thead className="text-xs uppercase ">
                             <tr className="border-b border-neutral-950">
                                 <th scope="col" className="px-6 py-3">
                                     Item
+                                </th>
+                                <th scope="col" className="px-6 py-3">
+                                    Quantity
                                 </th>
                                 <th scope="col" className="px-6 py-3">
                                     Price
@@ -59,23 +64,28 @@ const table = ({ table, isOpen, setIsOpen }) => {
                             </tr>
                         </thead>
                         <tbody>
-                            {tableData.map((item) => (
-                                <tr
-                                    key={item._id}
-                                    scope="row"
-                                    className="px-6 py-4 font-medium border-b border-neutral-950 text-gray-900 whitespace-nowrap"
-                                >
-                                    <td className="px-6 py-4">
-                                        {capitalize(item.itemId.item)}
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        {rupee.format(item.itemId.price)}
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        {capitalize(item.status)}
-                                    </td>
-                                </tr>
-                            ))}
+                            {tableData
+                                .filter((o) => o._id.tableId == table._id)
+                                .map((item) => (
+                                    <tr
+                                        key={item.orderId}
+                                        scope="row"
+                                        className="px-6 py-4 font-medium border-b border-neutral-950 text-gray-900 whitespace-nowrap"
+                                    >
+                                        <td className="px-6 py-4">
+                                            {item.itemName}
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            {item.count}
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            {rupee.format(item.price)}
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            {capitalize(item.status)}
+                                        </td>
+                                    </tr>
+                                ))}
                         </tbody>
                     </table>
                 </section>

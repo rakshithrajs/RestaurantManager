@@ -29,11 +29,19 @@ export const getOrders = async (req, res) => {
                         itemId: "$itemId",
                         tableId: "$tableId",
                     },
-                    orderId: {$first: "$_id"},
+                    orderId: { $first: "$_id" },
                     count: { $sum: 1 },
                     tableNo: { $first: "$tableDetails.tableNo" },
                     itemName: { $first: "$itemDetails.item" },
-                    status: {$first: "$status"},
+                    status: { $first: "$status" },
+                    createdAt: { $first: "$createdAt" },
+                    price: { $first: "$itemDetails.price" },
+                },
+            },
+            {
+                $sort: {
+                    createdAt: 1,
+                    count: -1,
                 },
             },
         ]);
@@ -65,22 +73,6 @@ export const addOrder = async (req, res) => {
     } catch (error) {
         res.status(400).json({ message: error.message });
         console.log(error.message);
-    }
-};
-
-export const getOrderByTable = async (req, res) => {
-    const { id } = req.params;
-    try {
-        const orders = await orderModel
-            .find({ tableId: id })
-            .populate({
-                path: "itemId",
-                select: "item price",
-            })
-            .populate("tableId", "tableNo");
-        res.status(200).json(orders);
-    } catch (error) {
-        res.status(400).json({ message: error.message });
     }
 };
 
