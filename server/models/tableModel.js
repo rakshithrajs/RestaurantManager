@@ -13,6 +13,10 @@ const tableSchema = new Schema(
             type: String,
             trim: true,
         },
+        customerPhone: {
+            type: String,
+            trim: true,
+        },
         occupants: {
             type: Number,
             default: 0,
@@ -25,5 +29,9 @@ const tableSchema = new Schema(
     },
     { timestamps: true }
 );
+
+tableSchema.pre("save", function () {
+    this.customerPhone = "+91" + this.customerPhone;
+});
 
 export const tableModel = new model("tableModel", tableSchema);

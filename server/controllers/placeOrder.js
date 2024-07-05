@@ -40,8 +40,8 @@ export const getOrders = async (req, res) => {
             },
             {
                 $sort: {
+                    itemName: 1,
                     createdAt: 1,
-                    count: -1,
                 },
             },
         ]);
