@@ -6,7 +6,8 @@ import dotenv from "dotenv";
 import menuRoutes from "./Routes/menuRoutes.js";
 import categoryRoutes from "./Routes/categoryRoutes.js";
 import tableRoutes from "./Routes/tableRoutes.js";
-import orderRoutes from "./Routes/orderRoutes.js"
+import orderRoutes from "./Routes/orderRoutes.js";
+import checkoutRoutes from "./Routes/checkoutRoutes.js";
 
 dotenv.config();
 
@@ -21,6 +22,7 @@ app.use("/menu", menuRoutes);
 app.use("/category", categoryRoutes);
 app.use("/tables", tableRoutes);
 app.use("/orders", orderRoutes);
+app.use("/checkout", checkoutRoutes);
 app.get("/", (req, res) => res.send("Hello World!"));
 
 mongoose
@@ -35,5 +37,5 @@ mongoose
     })
     .catch((err) => {
         console.log(err);
-        process.exit(1)
+        process.exit(1);
     });

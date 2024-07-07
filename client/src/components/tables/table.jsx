@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 const table = ({ table, isOpen, setIsOpen }) => {
     const [render, setRender] = useContext(renderState);
     const [tableData, setTableData] = useState([]);
+    const [paymentStatus, setPaymentStatus] = useState(false);
     useEffect(() => {
         const fetchOrders = async () => {
             try {
@@ -24,12 +25,14 @@ const table = ({ table, isOpen, setIsOpen }) => {
     }, [isOpen]);
     const handleCheckout = async () => {
         try {
-            const response = await api.delete(`/tables/${table._id}`);
-            const res = await api.delete(`/orders/all/${table._id}`);
-            console.log(response.data);
-            console.log(res.data);
-            setIsOpen(!isOpen);
-            setRender(render + 1);
+            if (paymentStatus) {
+                const response = await api.delete(`/tables/${table._id}`);
+                const res = await api.delete(`/orders/all/${table._id}`);
+                console.log(response.data);
+                console.log(res.data);
+                setIsOpen(!isOpen);
+                setRender(render + 1);
+            }
         } catch (error) {
             console.log(error.message);
         }
@@ -99,12 +102,14 @@ const table = ({ table, isOpen, setIsOpen }) => {
                     >
                         Cancel
                     </button>
-                    <button
-                        className=" hover:bg-teal-300 text-gray-800 font-semibold py-1 px-2 border border-gray-400 rounded shadow"
-                        onClick={handleCheckout}
-                    >
-                        Checkout
-                    </button>
+                    <Link to={`/checkout/${table._id}`}>
+                        <button
+                            className=" hover:bg-teal-300 text-gray-800 font-semibold py-1 px-2 border border-gray-400 rounded shadow"
+                            onClick={handleCheckout}
+                        >
+                            Checkout
+                        </button>
+                    </Link>
                     <Link to={`/orders/${table._id}`}>
                         <button className=" hover:bg-teal-300 text-gray-800 font-semibold py-1 px-2 border border-gray-400 rounded shadow">
                             Place Order
