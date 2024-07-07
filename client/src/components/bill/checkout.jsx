@@ -3,10 +3,12 @@ import api from "../../api/api.jsx";
 import { useParams } from "react-router";
 import { capitalize } from "../../utils/capitalize.jsx";
 import moment from "moment";
-import rupee from "../../utils/currencyFormatter.jsx"
+import rupee from "../../utils/currencyFormatter.jsx";
+import PaymentDone from "./paymentDone.jsx";
 
 const checkout = () => {
     const [data, setData] = useState();
+    const [visible, setVisible] = useState(false);
     const { id } = useParams();
     useEffect(() => {
         const getDetails = async () => {
@@ -19,13 +21,21 @@ const checkout = () => {
         };
         getDetails();
     }, []);
+    const handlePayment = async () => {
+        try {
+            setVisible(true);
+        } catch (error) {
+            console.log(error);
+        }
+    };
     return (
         <>
+            {visible && <PaymentDone setVisible={setVisible} />}
             <div className="max-w-[85rem] px-4 sm:px-6 lg:px-8 my-4 sm:my-10 sm:w-11/12 lg:w-3/4 mx-auto">
                 <div className="flex flex-col p-4 sm:p-10 bg-white shadow-md rounded-xl">
                     <div>
                         <h2 className="text-2xl md:text-3xl font-semibold text-gray-800">
-                            Invoice #
+                            Bill #
                         </h2>
                         <span className="mt-1 block text-gray-500">
                             {data && data._id}
@@ -106,7 +116,9 @@ const checkout = () => {
                                                 Amount
                                             </h5>
                                             <p className=" text-gray-800">
-                                                {rupee.format(i.quantity * i.price)}
+                                                {rupee.format(
+                                                    i.quantity * i.price
+                                                )}
                                             </p>
                                         </td>
                                     </tr>
@@ -121,12 +133,14 @@ const checkout = () => {
                                 </th>
                                 <td className="px-[2vw] text-gray-500">
                                     {data &&
-                                        rupee.format(data.items.reduce(
-                                            (acc, item) =>
-                                                acc +
-                                                item.quantity * item.price,
-                                            0
-                                        ))}
+                                        rupee.format(
+                                            data.items.reduce(
+                                                (acc, item) =>
+                                                    acc +
+                                                    item.quantity * item.price,
+                                                0
+                                            )
+                                        )}
                                 </td>
                             </tr>
                             <tr>
@@ -135,14 +149,16 @@ const checkout = () => {
                                 </th>
                                 <td className="px-[2vw] text-gray-500">
                                     {data &&
-                                        rupee.format(data.items.reduce(
-                                            (acc, item) =>
-                                                acc +
-                                                item.quantity *
-                                                    item.price *
-                                                    0.05,
-                                            0
-                                        ))}
+                                        rupee.format(
+                                            data.items.reduce(
+                                                (acc, item) =>
+                                                    acc +
+                                                    item.quantity *
+                                                        item.price *
+                                                        0.05,
+                                                0
+                                            )
+                                        )}
                                 </td>
                             </tr>
                             <tr>
@@ -151,14 +167,16 @@ const checkout = () => {
                                 </th>
                                 <td className="px-[2vw] text-gray-500">
                                     {data &&
-                                        rupee.format(data.items.reduce(
-                                            (acc, item) =>
-                                                acc +
-                                                item.quantity *
-                                                    item.price *
-                                                    1.05,
-                                            0
-                                        ))}
+                                        rupee.format(
+                                            data.items.reduce(
+                                                (acc, item) =>
+                                                    acc +
+                                                    item.quantity *
+                                                        item.price *
+                                                        1.05,
+                                                0
+                                            )
+                                        )}
                                 </td>
                             </tr>
                         </tbody>
@@ -168,8 +186,11 @@ const checkout = () => {
                     </div>
                 </div>
             </div>
-            <button className="ml-[45%] py-2 px-4 font-semibold rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                Proceed to Billing
+            <button
+                onClick={handlePayment}
+                className="ml-[45%] mb-[2vw] py-2 px-4 font-semibold rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
+                Proceed to Payment
             </button>
         </>
     );

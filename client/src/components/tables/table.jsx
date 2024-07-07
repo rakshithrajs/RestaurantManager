@@ -15,7 +15,6 @@ const table = ({ table, isOpen, setIsOpen }) => {
                 if (table) {
                     const orders = await api.get(`/orders`);
                     setTableData(orders.data);
-                    console.log(orders.data);
                 }
             } catch (error) {
                 console.log(error.message);
