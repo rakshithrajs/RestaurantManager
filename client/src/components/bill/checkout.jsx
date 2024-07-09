@@ -8,6 +8,7 @@ import PaymentDone from "./paymentDone.jsx";
 
 const checkout = () => {
     const [data, setData] = useState();
+    const [orderData, setOrderData] = useState();
     const [visible, setVisible] = useState(false);
     const { id } = useParams();
     useEffect(() => {
@@ -21,11 +22,29 @@ const checkout = () => {
         };
         getDetails();
     }, []);
+    useEffect(() => {
+        if (data) {
+            const total = data.items.reduce(
+                (acc, item) => acc + item.price * item.quantity * 1.05,
+                0
+            );
+            setOrderData({ ...data, total: total });
+        }
+    }, [data]);
     const handlePayment = async () => {
         try {
             setVisible(true);
+            const order = await api.post("/checkout/history", orderData);
+            const response = await api.delete(`/tables/${id}`);
+            const res = await api.delete(`/orders/all/${id}`);
+            console.log(response.data);
+            console.log(res.data);
+            console.log(order.data);
+            setTimeout(() => {
+                navigate("/tables");
+            }, 2000);
         } catch (error) {
-            console.log(error);
+            console.log(error.message);
         }
     };
     return (

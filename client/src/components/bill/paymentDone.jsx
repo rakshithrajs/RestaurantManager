@@ -1,13 +1,11 @@
 import { useEffect } from "react";
-import { useNavigate } from "react-router";
 
 const paymentDone = ({ setVisible }) => {
-    const navigate = useNavigate()
     useEffect(() => {
         setTimeout(() => {
             setVisible(false);
-            navigate("/tables");
         }, 2000);
+        return () => clearTimeout();
     }, []);
     return (
         <>

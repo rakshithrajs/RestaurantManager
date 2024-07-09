@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { orderCount } from "../models/orderWithCount.js";
+import { orderHistoryModel } from "../models/orderHistory.js";
 
 export const getTableBill = async (req, res) => {
     try {
@@ -52,12 +53,22 @@ export const getTableBill = async (req, res) => {
                     _id: "$tableId",
                     customerName: { $first: "$customerName" },
                     customerPhone: { $first: "$customerPhone" },
-                    createdAt: {$first: "$createdAt"},
+                    createdAt: { $first: "$createdAt" },
                     items: { $push: { $arrayElemAt: ["$items", 0] } },
                 },
             },
         ]);
         res.status(200).json(orders);
+    } catch (error) {
+        res.json(error.message);
+    }
+};
+
+export const postOrderHistory = async (req, res) => {
+    try {
+        const order = req.body;
+        const orderHistory = await orderHistoryModel.create(order);
+        res.status(200).json(orderHistory);
     } catch (error) {
         res.json(error.message);
     }

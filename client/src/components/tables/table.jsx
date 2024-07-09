@@ -8,7 +8,6 @@ import { Link } from "react-router-dom";
 const table = ({ table, isOpen, setIsOpen }) => {
     const [render, setRender] = useContext(renderState);
     const [tableData, setTableData] = useState([]);
-    const [paymentStatus, setPaymentStatus] = useState(false);
     useEffect(() => {
         const fetchOrders = async () => {
             try {
@@ -24,14 +23,8 @@ const table = ({ table, isOpen, setIsOpen }) => {
     }, [isOpen]);
     const handleCheckout = async () => {
         try {
-            if (paymentStatus) {
-                const response = await api.delete(`/tables/${table._id}`);
-                const res = await api.delete(`/orders/all/${table._id}`);
-                console.log(response.data);
-                console.log(res.data);
-                setIsOpen(!isOpen);
-                setRender(render + 1);
-            }
+            setIsOpen(!isOpen);
+            setRender(render + 1);
         } catch (error) {
             console.log(error.message);
         }
