@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import api from "../../api/api.jsx";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { capitalize } from "../../utils/capitalize.jsx";
 import moment from "moment";
 import rupee from "../../utils/currencyFormatter.jsx";
 import PaymentDone from "./paymentDone.jsx";
 
 const checkout = () => {
+    const navigate = useNavigate;
     const [data, setData] = useState();
     const [orderData, setOrderData] = useState();
     const [visible, setVisible] = useState(false);
@@ -42,7 +43,7 @@ const checkout = () => {
             console.log(order.data);
             setTimeout(() => {
                 navigate("/tables");
-            }, 2000);
+            }, 1000);
         } catch (error) {
             console.log(error.message);
         }

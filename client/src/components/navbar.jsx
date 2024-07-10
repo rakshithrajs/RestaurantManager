@@ -8,7 +8,7 @@ const navbar = () => {
             <img src={logo} alt="logo" height={100} width={100} className="cursor-pointer transition-all hover:scale-[1.1]"/>
             <Link to={"/"} className=" font-bold text-2xl cursor-pointer transition-all hover:scale-110">Menu</Link>
             <Link to={"/tables"} className=" font-bold text-2xl cursor-pointer transition-all hover:scale-110">Tables</Link>
-            <a className=" font-bold text-2xl cursor-pointer transition-all hover:scale-110">Sales</a>
+            <Link to={"/sales"} className=" font-bold text-2xl cursor-pointer transition-all hover:scale-110">Sales</Link>
             <Link to={"/allorders"} className=" font-bold text-2xl cursor-pointer transition-all hover:scale-110">Orders</Link>
         </nav>
     );

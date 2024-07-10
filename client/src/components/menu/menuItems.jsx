@@ -38,7 +38,7 @@ const menuItems = ({ table, set }) => {
             }
         };
         getItems();
-    }, [render]);
+    }, [render,category]);
     useEffect(() => {
         const addOrders = async () => {
             try {
@@ -73,8 +73,6 @@ const menuItems = ({ table, set }) => {
         try {
             const response = await api.delete(`/category/${id}`);
             const res = await api.delete(`/menu/all/${id}`);
-            console.log(res.data);
-            console.log(response.data);
             setRender(render + 1);
         } catch (error) {
             console.log(error.message);
@@ -101,7 +99,7 @@ const menuItems = ({ table, set }) => {
                             <thead key={i._id}>
                                 <tr>
                                     <th className="px-4 text-2xl" colSpan={6}>
-                                        <div className=" flex justify-center items-center gap-[2vw]">
+                                        <div className=" flex justify-center items-center gap-[2vw] cursor-pointer">
                                             {i.name}
                                             <RiDeleteBin6Line
                                                 onClick={() => {

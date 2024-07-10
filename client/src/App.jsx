@@ -8,6 +8,7 @@ import axios from "./api/api.jsx";
 import { Route, Routes } from "react-router";
 import PlaceOrder from "./components/orders/placeOrder.jsx";
 import Checkout from "./components/bill/checkout.jsx";
+import Sales from "./components/sales/sales.jsx"
 
 //TODO: implement pagination in menu and order
 
@@ -36,6 +37,7 @@ const App = () => {
                         <Route path="/orders/:id" element={<PlaceOrder />} />
                         <Route path="/allorders" element={<AllOrders />} />
                         <Route path="/checkout/:id" element={<Checkout />} />
+                        <Route path="/sales" element={<Sales />} />
                     </Routes>
                 </categorydata.Provider>
             </renderState.Provider>
