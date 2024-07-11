@@ -1,18 +1,24 @@
 import React, { useContext, useEffect, useState } from "react";
 import axios from "../../api/api.jsx";
 import { categorydata, renderState } from "../../contexts/menuContext.jsx";
+import { useAuthContext } from "../../hooks/useAuthContext.jsx";
 
 const editItem = ({ isVisible, setIsVisible, id, editItem }) => {
     const [formData, setFormData] = useState();
     const [render, setRender] = useContext(renderState);
     const category = useContext(categorydata);
+    const { user } = useAuthContext();
     useEffect(() => {
         setFormData(editItem);
     }, [editItem]);
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
-            const response = await axios.put(`/menu/${id}`, formData);
+            const response = await axios.put(`/menu/${id}`, formData, {
+                headers: {
+                    Authorization: `Bearer ${user.data.token}`,
+                },
+            });
             console.log(response.data);
         } catch (error) {
             console.error(error.message);

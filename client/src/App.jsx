@@ -5,10 +5,13 @@ import Tables from "./components/tables/tables.jsx";
 import AllOrders from "./components/orders/allOrders.jsx";
 import { renderState, categorydata } from "./contexts/menuContext.jsx";
 import axios from "./api/api.jsx";
-import { Route, Routes } from "react-router";
+import { Route, Routes, Navigate } from "react-router";
 import PlaceOrder from "./components/orders/placeOrder.jsx";
 import Checkout from "./components/bill/checkout.jsx";
-import Sales from "./components/sales/sales.jsx"
+import Sales from "./components/sales/sales.jsx";
+import Login from "./components/auth/login.jsx";
+import Signup from "./components/auth/signup.jsx";
+import { useAuthContext } from "./hooks/useAuthContext.jsx";
 
 //TODO: implement pagination in menu and order
 
@@ -26,18 +29,69 @@ const App = () => {
         };
         fetchCategories();
     }, []);
+    const { user } = useAuthContext();
     return (
         <>
             <Navbar />
             <renderState.Provider value={[render, setRender]}>
                 <categorydata.Provider value={category}>
                     <Routes>
-                        <Route path="/" element={<Menu />} />
-                        <Route path="/tables" element={<Tables />} />
-                        <Route path="/orders/:id" element={<PlaceOrder />} />
-                        <Route path="/allorders" element={<AllOrders />} />
-                        <Route path="/checkout/:id" element={<Checkout />} />
-                        <Route path="/sales" element={<Sales />} />
+                        <Route
+                            path="/"
+                            element={
+                                user ? <Menu /> : <Navigate to={"/login"} />
+                            }
+                        />
+                        <Route
+                            path="/tables"
+                            element={
+                                user ? <Tables /> : <Navigate to={"/login"} />
+                            }
+                        />
+                        <Route
+                            path="/orders/:id"
+                            element={
+                                user ? (
+                                    <PlaceOrder />
+                                ) : (
+                                    <Navigate to={"/login"} />
+                                )
+                            }
+                        />
+                        <Route
+                            path="/allorders"
+                            element={
+                                user ? (
+                                    <AllOrders />
+                                ) : (
+                                    <Navigate to={"/login"} />
+                                )
+                            }
+                        />
+                        <Route
+                            path="/checkout/:id"
+                            element={
+                                user ? <Checkout /> : <Navigate to={"/login"} />
+                            }
+                        />
+                        <Route
+                            path="/sales"
+                            element={
+                                user ? <Sales /> : <Navigate to={"/login"} />
+                            }
+                        />
+                        <Route
+                            path="/login"
+                            element={
+                                !user ? <Login /> : <Navigate to={"/"} />
+                            }
+                        />
+                        <Route
+                            path="/signup"
+                            element={
+                                !user ? <Signup /> : <Navigate to={"/"} />
+                            }
+                        />
                     </Routes>
                 </categorydata.Provider>
             </renderState.Provider>

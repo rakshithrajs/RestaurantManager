@@ -10,8 +10,10 @@ import EditItem from "./editItem.jsx";
 import plus from "/plus.png";
 import { categorydata, renderState } from "../../contexts/menuContext.jsx";
 import { RiDeleteBin6Line } from "react-icons/ri";
+import { useAuthContext } from "../../hooks/useAuthContext.jsx";
 
 const menuItems = ({ table, set }) => {
+    const { user } = useAuthContext();
     const category = useContext(categorydata);
     const [editForm, setEditForm] = useState(false);
     const [edited, setEdited] = useState({
@@ -31,14 +33,20 @@ const menuItems = ({ table, set }) => {
     useEffect(() => {
         const getItems = async () => {
             try {
-                const response = await api.get("/menu");
+                const response = await api.get("/menu", {
+                    headers: {
+                        Authorization: `Bearer ${user.data.token}`,
+                    },
+                });
                 setItems(response.data);
             } catch (error) {
                 console.log(error.message);
             }
         };
-        getItems();
-    }, [render,category]);
+        if (user) {
+            getItems();
+        }
+    }, [render, category]);
     useEffect(() => {
         const addOrders = async () => {
             try {
@@ -61,8 +69,11 @@ const menuItems = ({ table, set }) => {
     };
     const handleDelete = async (id) => {
         try {
-            console.log(id);
-            const response = await api.delete(`/menu/${id}`);
+            const response = await api.delete(`/menu/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${user.data.token}`,
+                },
+            });
             console.log(response.data);
         } catch (error) {
             console.log(error.message);
@@ -72,7 +83,11 @@ const menuItems = ({ table, set }) => {
     const handleDeleteCategory = async (id) => {
         try {
             const response = await api.delete(`/category/${id}`);
-            const res = await api.delete(`/menu/all/${id}`);
+            const res = await api.delete(`/menu/all/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${user.data.token}`,
+                },
+            });
             setRender(render + 1);
         } catch (error) {
             console.log(error.message);

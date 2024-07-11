@@ -1,10 +1,11 @@
 import React, { useContext, useState } from "react";
 import axios from "../../api/api.jsx";
 import { categorydata, renderState } from "../../contexts/menuContext.jsx";
+import { useAuthContext } from "../../hooks/useAuthContext.jsx";
 
 const addItem = ({ isVisible, setIsVisible }) => {
     const [render, setRender] = useContext(renderState);
-    const category = useContext(categorydata)
+    const category = useContext(categorydata);
     const [formData, setFormData] = useState({
         item: "",
         price: 0.0,
@@ -12,17 +13,25 @@ const addItem = ({ isVisible, setIsVisible }) => {
         description: "",
         category: "",
     });
+    const { user } = useAuthContext();
     const handleSubmit = async (event) => {
         event.preventDefault();
+        if(!user){
+            alert("Please login to add items")
+        }
         try {
             console.log(formData.category);
-            const response = await axios.post("/menu", formData);
+            const response = await axios.post("/menu", formData, {
+                headers: {
+                    Authorization: `Bearer ${user.data.token}`,
+                },
+            });
             console.log(response.data);
         } catch (error) {
             console.error(error.message);
         }
         setIsVisible(!isVisible);
-        setRender(render+1);
+        setRender(render + 1);
         setFormData({
             item: "",
             price: 0.0,

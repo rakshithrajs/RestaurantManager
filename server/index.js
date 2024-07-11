@@ -9,6 +9,7 @@ import tableRoutes from "./Routes/tableRoutes.js";
 import orderRoutes from "./Routes/orderRoutes.js";
 import checkoutRoutes from "./Routes/checkoutRoutes.js";
 import salesRoutes from "./Routes/salesRoutes.js";
+import authRoutes from "./Routes/authRoutes.js";
 
 dotenv.config();
 
@@ -25,6 +26,7 @@ app.use("/tables", tableRoutes);
 app.use("/orders", orderRoutes);
 app.use("/checkout", checkoutRoutes);
 app.use("/sales", salesRoutes);
+app.use("/auth", authRoutes);
 app.get("/", (req, res) => res.send("Hello World!"));
 
 mongoose
