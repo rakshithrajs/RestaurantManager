@@ -1,4 +1,4 @@
-//setting up routes for orders
+import { requireAuth } from "../middleware/requireAuth.js";
 import express from "express";
 const router = express.Router();
 import {
@@ -9,6 +9,8 @@ import {
     updateOrder,
     getOneOrder,
 } from "../controllers/placeOrder.js";
+
+router.use(requireAuth);
 
 router.route("/").get(getOrders).post(addOrder);
 router.route("/:id").get(getOneOrder).delete(deleteOrder).put(updateOrder);

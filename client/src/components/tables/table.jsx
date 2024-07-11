@@ -4,22 +4,30 @@ import { capitalize } from "../../utils/capitalize.jsx";
 import { useContext, useEffect, useState } from "react";
 import { renderState } from "../../contexts/menuContext.jsx";
 import { Link } from "react-router-dom";
+import { useAuthContext } from "../../hooks/useAuthContext.jsx";
 
 const table = ({ table, isOpen, setIsOpen }) => {
+    const { user } = useAuthContext();
     const [render, setRender] = useContext(renderState);
     const [tableData, setTableData] = useState([]);
     useEffect(() => {
         const fetchOrders = async () => {
             try {
                 if (table) {
-                    const orders = await api.get(`/orders`);
+                    const orders = await api.get(`/orders`, {
+                        headers: {
+                            Authorization: `Bearer ${user.data.token}`,
+                        },
+                    });
                     setTableData(orders.data);
                 }
             } catch (error) {
                 console.log(error.message);
             }
         };
-        fetchOrders();
+        if (user) {
+            fetchOrders();
+        }
     }, [isOpen]);
     const handleCheckout = async () => {
         try {

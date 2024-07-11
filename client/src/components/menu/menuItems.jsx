@@ -50,7 +50,11 @@ const menuItems = ({ table, set }) => {
     useEffect(() => {
         const addOrders = async () => {
             try {
-                const response = await api.post("/orders", order);
+                const response = await api.post("/orders", order, {
+                    headers: {
+                        Authorization: `Bearer ${user.data.token}`,
+                    },
+                });
                 console.log(order);
                 console.log(response.data);
             } catch (error) {
@@ -82,7 +86,11 @@ const menuItems = ({ table, set }) => {
     };
     const handleDeleteCategory = async (id) => {
         try {
-            const response = await api.delete(`/category/${id}`);
+            const response = await api.delete(`/category/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${user.data.token}`,
+                },
+            });
             const res = await api.delete(`/menu/all/${id}`, {
                 headers: {
                     Authorization: `Bearer ${user.data.token}`,

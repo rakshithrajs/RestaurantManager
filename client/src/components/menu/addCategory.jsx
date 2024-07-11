@@ -1,17 +1,23 @@
 import React from "react";
-import api from "../../api/api.jsx"
+import api from "../../api/api.jsx";
 import { IoMdCloseCircle } from "react-icons/io";
+import { useAuthContext } from "../../hooks/useAuthContext.jsx";
 
 const addCategory = ({ isOpen, setIsOpen }) => {
+    const { user } = useAuthContext();
     const [category, setCategory] = React.useState({ name: "" });
-    const handleSubmit = async() => {
+    const handleSubmit = async () => {
         try {
-            const response = await api.post("/category", category)
-            console.log(response)
+            const response = await api.post("/category", category, {
+                headers: {
+                    Authorization: `Bearer ${user.data.token}`,
+                },
+            });
+            console.log(response);
         } catch (error) {
-            console.log(error)
+            console.log(error);
         }
-    }
+    };
     if (!isOpen) return null;
     return (
         <div className="fixed inset-0 bg-black bg-opacity-25 backdrop-blur-sm flex justify-center items-center">
@@ -30,7 +36,9 @@ const addCategory = ({ isOpen, setIsOpen }) => {
                         type="text"
                         placeholder="Category Name"
                         className="border border-gray-300 rounded px-4 py-2"
-                        onChange={(e) => setCategory({ ...category, name: e.target.value })}
+                        onChange={(e) =>
+                            setCategory({ ...category, name: e.target.value })
+                        }
                     />
                     <button className="bg-blue-500 text-white rounded px-4 py-2">
                         Add

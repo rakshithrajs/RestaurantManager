@@ -2,22 +2,30 @@ import React, { useEffect, useState, useRef, useContext } from "react";
 import api from "../../api/api.jsx";
 import { renderState } from "../../contexts/menuContext.jsx";
 import _ from "lodash";
+import { useAuthContext } from "../../hooks/useAuthContext.jsx";
 
 const allOrders = () => {
+    const { user } = useAuthContext();
     const [render, setRender] = useContext(renderState);
     const [orders, setOrders] = useState([]);
     const status = useRef("confirmed");
     useEffect(() => {
         const fetchOrder = async () => {
             try {
-                const response = await api.get("/orders");
+                const response = await api.get("/orders", {
+                    headers: {
+                        Authorization: `Bearer ${user.data.token}`,
+                    },
+                });
                 setOrders(response.data);
                 console.log(response.data);
             } catch (error) {
                 console.log(error.message);
             }
         };
-        fetchOrder();
+        if (user) {
+            fetchOrder();
+        }
     }, [render]);
     const handleChange = async (id, orderData) => {
         const updated = orders.map((o) =>
@@ -25,9 +33,17 @@ const allOrders = () => {
         );
         console.log(updated);
         try {
-            const response = await api.put(`/orders/${id}`, {
-                status: orderData.status,
-            });
+            const response = await api.put(
+                `/orders/${id}`,
+                {
+                    status: orderData.status,
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${user.data.token}`,
+                    },
+                }
+            );
             setOrders(updated);
             setRender(render + 1);
             console.log(response.data);
@@ -35,7 +51,6 @@ const allOrders = () => {
             console.log(error.message);
         }
     };
-    // console.log(newOrder);
     return (
         <div className="flex flex-col my-[2vw] mx-[2vw] shadow border-b border-gray-200 rounded-md">
             <table className="">

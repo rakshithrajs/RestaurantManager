@@ -5,20 +5,28 @@ import Table from "./table.jsx";
 import plus from "/plus.png";
 import api from "../../api/api.jsx";
 import moment from "moment";
+import { useAuthContext } from "../../hooks/useAuthContext.jsx";
 
 const tables = () => {
+    const { user } = useAuthContext();
     const [render, setRender] = useContext(renderState);
     const [tables, setTables] = useState([]);
     useEffect(() => {
         const getTables = async () => {
             try {
-                const response = await api.get("/tables");
+                const response = await api.get("/tables", {
+                    headers: {
+                        Authorization: `Bearer ${user.data.token}`,
+                    },
+                });
                 setTables(response.data);
             } catch (error) {
                 console.log(error.message);
             }
         };
-        getTables();
+        if (user) {
+            getTables();
+        }
     }, [render]);
     useEffect(() => {
         const intervalId = setInterval(() => {
@@ -66,7 +74,12 @@ const tables = () => {
                         className="space-y-[1vw] flex flex-col justify-center items-center cursor-pointer size-[200px] rounded-full bg-sky-500 bg-opacity-55 border border-black transition-all active:bg-opacity-65 active:scale-105 active:font-extrabold"
                     >
                         <h1 className="text-3xl font-bold ">{t.tableNo}</h1>
-                        <div> {!t.waitingTime? "Just Now" : `arrived ${t.waitingTime} ago`} </div>
+                        <div>
+                            {" "}
+                            {!t.waitingTime
+                                ? "Just Now"
+                                : `arrived ${t.waitingTime} ago`}{" "}
+                        </div>
                     </button>
                 ))}
             </main>

@@ -2,24 +2,36 @@ import { useContext, useEffect, useState } from "react";
 import api from "../../api/api.jsx";
 import { renderState } from "../../contexts/menuContext.jsx";
 import { MdDeleteOutline } from "react-icons/md";
+import { useAuthContext } from "../../hooks/useAuthContext.jsx";
 
 const order = ({ id }) => {
+    const { user } = useAuthContext();
     const [render, setRender] = useContext(renderState);
     const [order, setOrder] = useState();
     useEffect(() => {
         const fetchOrder = async () => {
             try {
-                const response = await api.get("/orders");
+                const response = await api.get("/orders", {
+                    headers: {
+                        Authorization: `Bearer ${user.data.token}`,
+                    },
+                });
                 setOrder(response.data);
             } catch (error) {
                 console.log(error.message);
             }
         };
-        fetchOrder();
+        if (user) {
+            fetchOrder();
+        }
     }, [render]);
     const deleteOrder = async (id) => {
         try {
-            const response = await api.delete(`/orders/${id}`);
+            const response = await api.delete(`/orders/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${user.data.token}`,
+                },
+            });
             console.log(response.data);
             setRender(render + 1);
         } catch (error) {
@@ -57,7 +69,9 @@ const order = ({ id }) => {
                                     <td className=" py-[1vw] text-center text-md">
                                         {o._id.itemId ? o.itemName : ""}
                                     </td>
-                                    <td className=" py-[1vw] text-center text-md">{o.count}</td>
+                                    <td className=" py-[1vw] text-center text-md">
+                                        {o.count}
+                                    </td>
                                     <td className=" px-[3vw]">
                                         <button
                                             onClick={() => {

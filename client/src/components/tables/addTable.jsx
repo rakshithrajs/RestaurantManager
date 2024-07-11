@@ -1,8 +1,10 @@
 import React, { useContext, useState } from "react";
 import api from "../../api/api.jsx";
 import { renderState } from "../../contexts/menuContext.jsx";
+import { useAuthContext } from "../../hooks/useAuthContext.jsx";
 
 const addTable = ({ isOpen, setIsOpen }) => {
+    const { user } = useAuthContext();
     const [render, setRender] = useContext(renderState);
     const [formData, setFormData] = useState({
         tableNo: 0,
@@ -14,7 +16,11 @@ const addTable = ({ isOpen, setIsOpen }) => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
-            const response = await api.post("/tables", formData);
+            const response = await api.post("/tables", formData, {
+                headers: {
+                    Authorization: `Bearer ${user.data.token}`,
+                },
+            });
             console.log(response.data);
             setIsOpen(!isOpen);
             setRender(render + 1);

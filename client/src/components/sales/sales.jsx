@@ -2,8 +2,10 @@ import React, { useEffect, useMemo, useState } from "react";
 import api from "../../api/api.jsx";
 import moment from "moment";
 import rupee from "../../utils/currencyFormatter.jsx";
+import { useAuthContext } from "../../hooks/useAuthContext.jsx";
 
 const sales = () => {
+    const { user } = useAuthContext();
     const [sales, setSales] = useState([]);
     const [yearfiltered, setYearsales] = useState(0);
     const [monthfiltered, setMonthsales] = useState(0);
@@ -30,25 +32,36 @@ const sales = () => {
     useEffect(() => {
         const getSales = async () => {
             try {
-                const response = await api.get("/sales");
+                const response = await api.get("/sales", {
+                    headers: {
+                        Authorization: `Bearer ${user.data.token}`,
+                    },
+                });
                 setSales(response.data);
             } catch (error) {
                 console.log(error.message);
             }
         };
-        getSales();
+        if (condition) {
+            getSales();
+        }
     }, []);
     useEffect(() => {
         const getDish = async () => {
             try {
-                const response = await api.get("/sales/dish");
+                const response = await api.get("/sales/dish", {
+                    headers: {
+                        Authorization: `Bearer ${user.data.token}`,
+                    },
+                });
                 setDish(response.data);
-                // console.log(response.data);
             } catch (error) {
                 console.log(error.message);
             }
         };
-        getDish();
+        if (user) {
+            getDish();
+        }
     }, []);
     useEffect(() => {
         let filtered = sales.filter(
@@ -82,7 +95,6 @@ const sales = () => {
         );
         setYeardish(dishes);
     }, [sales, dish]);
-    // console.log(daydish)
     return (
         <React.Fragment>
             <div className=" grid grid-cols-1 mt-5 mb-5 md:grid-cols-2">

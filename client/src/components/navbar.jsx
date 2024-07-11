@@ -48,7 +48,9 @@ const navbar = () => {
                 </nav>
                 {user && (
                     <div className="place-content-end flex items-center gap-6 mr-[2vw]">
-                        <span>{user.data.email}</span>
+                        <span className="font-bold text-2xl cursor-pointer transition-all hover:scale-110">
+                            {user.data.email}
+                        </span>
                         <button
                             onClick={handleLogout}
                             className=" font-bold text-2xl cursor-pointer transition-all hover:scale-110"

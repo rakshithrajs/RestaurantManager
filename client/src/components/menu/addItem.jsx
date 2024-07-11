@@ -16,8 +16,8 @@ const addItem = ({ isVisible, setIsVisible }) => {
     const { user } = useAuthContext();
     const handleSubmit = async (event) => {
         event.preventDefault();
-        if(!user){
-            alert("Please login to add items")
+        if (!user) {
+            alert("Please login to add items");
         }
         try {
             console.log(formData.category);

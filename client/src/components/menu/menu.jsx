@@ -6,8 +6,10 @@ import AddItem from "./addItem.jsx";
 import api from "../../api/api.jsx";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import AddCategory from "./addCategory.jsx";
+import { useAuthContext } from "../../hooks/useAuthContext.jsx";
 
 const menu = ({ id }) => {
+    const { user } = useAuthContext();
     const [items, setItems] = useState();
     const [table, setTable] = useState();
     const [itemForm, setItemForm] = useState(false);
@@ -16,14 +18,20 @@ const menu = ({ id }) => {
         const getTable = async () => {
             if (id) {
                 try {
-                    const response = await api.get(`/tables/${id}`);
+                    const response = await api.get(`/tables/${id}`, {
+                        headers: {
+                            Authorization: `Bearer ${user.data.token}`,
+                        },
+                    });
                     setTable(response.data);
                 } catch (error) {
                     console.log(error.message);
                 }
             }
         };
-        getTable();
+        if (user) {
+            getTable();
+        }
     }, []);
 
     return (

@@ -16,20 +16,26 @@ import { useAuthContext } from "./hooks/useAuthContext.jsx";
 //TODO: implement pagination in menu and order
 
 const App = () => {
+    const { user } = useAuthContext();
     const [render, setRender] = useState(0);
     const [category, setCategory] = useState([]);
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                const res = await axios.get("/category");
+                const res = await axios.get("/category", {
+                    headers: {
+                        Authorization: `Bearer ${user.data.token}`,
+                    },
+                });
                 setCategory(res.data);
             } catch (error) {
                 console.log(error.message);
             }
         };
-        fetchCategories();
+        if (user) {
+            fetchCategories();
+        }
     }, []);
-    const { user } = useAuthContext();
     return (
         <>
             <Navbar />
@@ -82,15 +88,11 @@ const App = () => {
                         />
                         <Route
                             path="/login"
-                            element={
-                                !user ? <Login /> : <Navigate to={"/"} />
-                            }
+                            element={!user ? <Login /> : <Navigate to={"/"} />}
                         />
                         <Route
                             path="/signup"
-                            element={
-                                !user ? <Signup /> : <Navigate to={"/"} />
-                            }
+                            element={!user ? <Signup /> : <Navigate to={"/"} />}
                         />
                     </Routes>
                 </categorydata.Provider>

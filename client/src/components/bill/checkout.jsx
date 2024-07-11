@@ -5,8 +5,10 @@ import { capitalize } from "../../utils/capitalize.jsx";
 import moment from "moment";
 import rupee from "../../utils/currencyFormatter.jsx";
 import PaymentDone from "./paymentDone.jsx";
+import { useAuthContext } from "../../hooks/useAuthContext.jsx";
 
 const checkout = () => {
+    const { user } = useAuthContext();
     const navigate = useNavigate;
     const [data, setData] = useState();
     const [orderData, setOrderData] = useState();
@@ -15,13 +17,19 @@ const checkout = () => {
     useEffect(() => {
         const getDetails = async () => {
             try {
-                const response = await api.get(`/checkout/${id}`);
+                const response = await api.get(`/checkout/${id}`, {
+                    headers: {
+                        Authorization: `Bearer ${user.data.token}`,
+                    },
+                });
                 setData(response.data[0]);
             } catch (error) {
                 console.log(error);
             }
         };
-        getDetails();
+        if (user) {
+            getDetails();
+        }
     }, []);
     useEffect(() => {
         if (data) {
@@ -35,9 +43,21 @@ const checkout = () => {
     const handlePayment = async () => {
         try {
             setVisible(true);
-            const order = await api.post("/checkout/history", orderData);
-            const response = await api.delete(`/tables/${id}`);
-            const res = await api.delete(`/orders/all/${id}`);
+            const order = await api.post("/checkout/history", orderData, {
+                headers: {
+                    Authorization: `Bearer ${user.data.token}`,
+                },
+            });
+            const response = await api.delete(`/tables/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${user.data.token}`,
+                },
+            });
+            const res = await api.delete(`/orders/all/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${user.data.token}`,
+                },
+            });
             console.log(response.data);
             console.log(res.data);
             console.log(order.data);
