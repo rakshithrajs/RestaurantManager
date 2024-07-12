@@ -1,12 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
 import axios from "../../api/api.jsx";
-import { categorydata, renderState } from "../../contexts/menuContext.jsx";
+import { renderState } from "../../contexts/menuContext.jsx";
 import { useAuthContext } from "../../hooks/useAuthContext.jsx";
 
-const editItem = ({ isVisible, setIsVisible, id, editItem }) => {
+const editItem = ({ isVisible, setIsVisible, id, editItem, category }) => {
     const [formData, setFormData] = useState();
     const [render, setRender] = useContext(renderState);
-    const category = useContext(categorydata);
     const { user } = useAuthContext();
     useEffect(() => {
         setFormData(editItem);
@@ -99,6 +98,7 @@ const editItem = ({ isVisible, setIsVisible, id, editItem }) => {
                                 </label>
                                 <select
                                     id="category"
+                                    name="category"
                                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 "
                                     value={formData.category}
                                     onChange={(event) => {
@@ -168,6 +168,7 @@ const editItem = ({ isVisible, setIsVisible, id, editItem }) => {
                                 <textarea
                                     id="description"
                                     rows="8"
+                                    name="description"
                                     className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 "
                                     placeholder="Item Description"
                                     value={formData.description || ""}

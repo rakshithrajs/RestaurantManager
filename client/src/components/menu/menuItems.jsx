@@ -8,13 +8,13 @@ import notavailable from "/notavailable.png";
 import deleteImg from "/delete.png";
 import EditItem from "./editItem.jsx";
 import plus from "/plus.png";
-import { categorydata, renderState } from "../../contexts/menuContext.jsx";
+import { renderState } from "../../contexts/menuContext.jsx";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { useAuthContext } from "../../hooks/useAuthContext.jsx";
 
 const menuItems = ({ table, set }) => {
+    const [loading, setLoading] = useState(true);
     const { user } = useAuthContext();
-    const category = useContext(categorydata);
     const [editForm, setEditForm] = useState(false);
     const [edited, setEdited] = useState({
         item: "",
@@ -30,15 +30,33 @@ const menuItems = ({ table, set }) => {
     const [items, setItems] = useState([]);
     const [render, setRender] = useContext(renderState);
     const [idi, setId] = useState(0);
+    const [category, setCategory] = useState([]);
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const res = await api.get("/category", {
+                    headers: {
+                        Authorization: `Bearer ${user.data.token}`,
+                    },
+                });
+                setCategory(res.data);
+            } catch (error) {
+                console.log(error.message);
+            }
+        };
+        fetchCategories();
+    }, []);
     useEffect(() => {
         const getItems = async () => {
             try {
+                setLoading(true);
                 const response = await api.get("/menu", {
                     headers: {
                         Authorization: `Bearer ${user.data.token}`,
                     },
                 });
                 setItems(response.data);
+                setLoading(false);
             } catch (error) {
                 console.log(error.message);
             }
@@ -107,6 +125,9 @@ const menuItems = ({ table, set }) => {
     } else {
         search = items;
     }
+    if (loading) {
+        return <div>Loading </div>;
+    }
     if (!table) {
         return (
             <>
@@ -115,6 +136,7 @@ const menuItems = ({ table, set }) => {
                     setIsVisible={setEditForm}
                     id={idi}
                     editItem={edited}
+                    category={category}
                 />
                 <table className=" w-full">
                     {category.map((i, index) => (

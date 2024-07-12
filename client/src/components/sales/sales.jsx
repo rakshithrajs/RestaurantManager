@@ -42,7 +42,7 @@ const sales = () => {
                 console.log(error.message);
             }
         };
-        if (condition) {
+        if (user) {
             getSales();
         }
     }, []);
@@ -66,32 +66,36 @@ const sales = () => {
     useEffect(() => {
         let filtered = sales.filter(
             (i) =>
-                moment(i.createdAt).format("DD/MM/YY") ===
+                moment(i.createdAt || 0).format("DD/MM/YY") ===
                 moment().format("DD/MM/YY")
         );
         setdaysales(filtered);
         let dishes = dish.filter(
             (i) =>
-                moment(i.createdAt).format("DD/MM/YY") ===
+                moment(i.createdAt || 0).format("DD/MM/YY") ===
                 moment().format("DD/MM/YY")
         );
         setdaydish(dishes);
         filtered = sales.filter(
             (i) =>
-                moment(i.createdAt).format("MM/YY") === moment().format("MM/YY")
+                moment(i.createdAt || 0).format("MM/YY") ===
+                moment().format("MM/YY")
         );
         setMonthsales(filtered);
         dishes = dish.filter(
             (i) =>
-                moment(i.createdAt).format("MM/YY") === moment().format("MM/YY")
+                moment(i.createdAt || 0).format("MM/YY") ===
+                moment().format("MM/YY")
         );
         setMonthdish(dishes);
         filtered = sales.filter(
-            (i) => moment(i.createdAt).format("YY") === moment().format("YY")
+            (i) =>
+                moment(i.createdAt || 0).format("YY") === moment().format("YY")
         );
         setYearsales(filtered);
         dishes = dish.filter(
-            (i) => moment(i.createdAt).format("YY") === moment().format("YY")
+            (i) =>
+                moment(i.createdAt || 0).format("YY") === moment().format("YY")
         );
         setYeardish(dishes);
     }, [sales, dish]);
@@ -107,7 +111,7 @@ const sales = () => {
                             Today's Sales
                         </h5>
                         <p className="font-normal text-gray-700 dark:text-gray-400">
-                            {dayfilteredsales ? (
+                            {dayfilteredsales.length > 0 ? (
                                 rupee.format(
                                     dayfilteredsales.reduce(
                                         (acc, item) => acc + item.total,
@@ -126,7 +130,7 @@ const sales = () => {
                             Monthly Sales
                         </h5>
                         <p className="font-normal text-gray-700 dark:text-gray-400">
-                            {monthfiltered ? (
+                            {monthfiltered.length > 0 ? (
                                 rupee.format(
                                     monthfiltered.reduce(
                                         (acc, item) => acc + item.total,
@@ -145,7 +149,7 @@ const sales = () => {
                             Yearly Sales
                         </h5>
                         <p className="font-normal text-gray-700 dark:text-gray-400">
-                            {yearfiltered ? (
+                            {yearfiltered.length > 0 ? (
                                 rupee.format(
                                     yearfiltered.reduce(
                                         (acc, item) => acc + item.total,
@@ -169,7 +173,7 @@ const sales = () => {
                             Today
                         </h5>
                         <p className="font-normal text-gray-700 dark:text-gray-400">
-                            {daydish ? (
+                            {daydish.length > 0 ? (
                                 daydish.flatMap((i, index) => {
                                     if (index >= 1) {
                                         return;
@@ -190,7 +194,7 @@ const sales = () => {
                             This Month
                         </h5>
                         <p className="font-normal text-gray-700 dark:text-gray-400">
-                            {monthdish ? (
+                            {monthdish.length > 0 ? (
                                 monthdish.flatMap((i, index) => {
                                     if (index >= 1) {
                                         return;
@@ -211,7 +215,7 @@ const sales = () => {
                             This Year
                         </h5>
                         <p className="font-normal text-gray-700 dark:text-gray-400">
-                            {yeardish ? (
+                            {yeardish.length > 0 ? (
                                 yeardish.flatMap((i, index) => {
                                     if (index >= 1) {
                                         return;

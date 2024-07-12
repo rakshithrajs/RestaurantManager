@@ -1,11 +1,10 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import axios from "../../api/api.jsx";
-import { categorydata, renderState } from "../../contexts/menuContext.jsx";
+import { renderState } from "../../contexts/menuContext.jsx";
 import { useAuthContext } from "../../hooks/useAuthContext.jsx";
 
 const addItem = ({ isVisible, setIsVisible }) => {
     const [render, setRender] = useContext(renderState);
-    const category = useContext(categorydata);
     const [formData, setFormData] = useState({
         item: "",
         price: 0.0,
@@ -14,6 +13,22 @@ const addItem = ({ isVisible, setIsVisible }) => {
         category: "",
     });
     const { user } = useAuthContext();
+    const [category, setCategory] = useState([]);
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const res = await axios.get("/category", {
+                    headers: {
+                        Authorization: `Bearer ${user.data.token}`,
+                    },
+                });
+                setCategory(res.data);
+            } catch (error) {
+                console.log(error.message);
+            }
+        };
+        fetchCategories();
+    }, []);
     const handleSubmit = async (event) => {
         event.preventDefault();
         if (!user) {
@@ -111,6 +126,7 @@ const addItem = ({ isVisible, setIsVisible }) => {
                                 </label>
                                 <select
                                     id="category"
+                                    name="category"
                                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 "
                                     value={formData.category}
                                     onChange={(event) => {
@@ -176,6 +192,7 @@ const addItem = ({ isVisible, setIsVisible }) => {
                                 <textarea
                                     id="description"
                                     rows="8"
+                                    name="description"
                                     className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 "
                                     placeholder="Item Description"
                                     value={formData.description}

@@ -66,12 +66,13 @@ const logIn = () => {
                             Remember Me
                         </label>
                     </div>
-                    <div className="mb-6 text-blue-500">
+                    <div id="forgot" className="mb-6 text-blue-500">
                         <a href="#" className="hover:underline">
                             Forgot Password?
                         </a>
                     </div>
                     <button
+                        id="submit"
                         onClick={handleSubmit}
                         type="submit"
                         className={

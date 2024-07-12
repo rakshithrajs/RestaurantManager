@@ -35,6 +35,8 @@ const addCategory = ({ isOpen, setIsOpen }) => {
                     <input
                         type="text"
                         placeholder="Category Name"
+                        id="catgoryname"
+                        name="categoryname"
                         className="border border-gray-300 rounded px-4 py-2"
                         onChange={(e) =>
                             setCategory({ ...category, name: e.target.value })
