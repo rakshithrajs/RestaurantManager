@@ -68,7 +68,7 @@ const logIn = () => {
                     </div>
                     <div id="forgot" className="mb-6 text-blue-500">
                         <a href="#" className="hover:underline">
-                            Forgot Password?
+                            Forgot Password..?
                         </a>
                     </div>
                     <button
