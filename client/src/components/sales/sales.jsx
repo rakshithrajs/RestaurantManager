@@ -1,240 +1,173 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import api from "../../api/api.jsx";
 import moment from "moment";
 import rupee from "../../utils/currencyFormatter.jsx";
 import { useAuthContext } from "../../hooks/useAuthContext.jsx";
 
-const sales = () => {
+const Sales = () => {
     const { user } = useAuthContext();
     const [sales, setSales] = useState([]);
-    const [yearfiltered, setYearsales] = useState(0);
-    const [monthfiltered, setMonthsales] = useState(0);
-    const [dayfilteredsales, setdaysales] = useState(0);
-    const [yeardish, setYeardish] = useState([
-        {
-            _id: "",
-            itemName: "",
-        },
-    ]);
-    const [monthdish, setMonthdish] = useState([
-        {
-            _id: "",
-            itemName: "",
-        },
-    ]);
-    const [daydish, setdaydish] = useState([
-        {
-            _id: "",
-            itemName: "",
-        },
-    ]);
+    const [yearfiltered, setYearsales] = useState([]);
+    const [monthfiltered, setMonthsales] = useState([]);
+    const [dayfilteredsales, setdaysales] = useState([]);
+    const [yeardish, setYeardish] = useState([]);
+    const [monthdish, setMonthdish] = useState([]);
+    const [daydish, setdaydish] = useState([]);
     const [dish, setDish] = useState([]);
+
+    // Fetch sales and dish data
     useEffect(() => {
-        const getSales = async () => {
+        const fetchData = async () => {
             try {
-                const response = await api.get("/sales", {
-                    headers: {
-                        Authorization: `Bearer ${user.data.token}`,
-                    },
-                });
-                setSales(response.data);
+                const [salesRes, dishRes] = await Promise.all([
+                    api.get("/sales", {
+                        headers: { Authorization: `Bearer ${user.data.token}` },
+                    }),
+                    api.get("/sales/dish", {
+                        headers: { Authorization: `Bearer ${user.data.token}` },
+                    }),
+                ]);
+                setSales(salesRes.data);
+                setDish(dishRes.data);
             } catch (error) {
-                console.log(error.message);
+                console.error("Error fetching data:", error.message);
             }
         };
-        if (user) {
-            getSales();
-        }
-    }, []);
+
+        if (user) fetchData();
+    }, [user]);
+
+    // Filter sales and dishes
     useEffect(() => {
-        const getDish = async () => {
-            try {
-                const response = await api.get("/sales/dish", {
-                    headers: {
-                        Authorization: `Bearer ${user.data.token}`,
-                    },
-                });
-                setDish(response.data);
-            } catch (error) {
-                console.log(error.message);
-            }
-        };
-        if (user) {
-            getDish();
-        }
-    }, []);
-    useEffect(() => {
-        let filtered = sales.filter(
-            (i) =>
-                moment(i.createdAt || 0).format("DD/MM/YY") ===
-                moment().format("DD/MM/YY")
-        );
-        setdaysales(filtered);
-        let dishes = dish.filter(
-            (i) =>
-                moment(i.createdAt || 0).format("DD/MM/YY") ===
-                moment().format("DD/MM/YY")
-        );
-        setdaydish(dishes);
-        filtered = sales.filter(
-            (i) =>
-                moment(i.createdAt || 0).format("MM/YY") ===
-                moment().format("MM/YY")
-        );
-        setMonthsales(filtered);
-        dishes = dish.filter(
-            (i) =>
-                moment(i.createdAt || 0).format("MM/YY") ===
-                moment().format("MM/YY")
-        );
-        setMonthdish(dishes);
-        filtered = sales.filter(
-            (i) =>
-                moment(i.createdAt || 0).format("YY") === moment().format("YY")
-        );
-        setYearsales(filtered);
-        dishes = dish.filter(
-            (i) =>
-                moment(i.createdAt || 0).format("YY") === moment().format("YY")
-        );
-        setYeardish(dishes);
+        const filterByTime = (data, format) =>
+            data.filter(
+                (item) =>
+                    moment(item.createdAt || 0).format(format) ===
+                    moment().format(format)
+            );
+
+        setdaysales(filterByTime(sales, "DD/MM/YY"));
+        setMonthsales(filterByTime(sales, "MM/YY"));
+        setYearsales(filterByTime(sales, "YY"));
+
+        setdaydish(filterByTime(dish, "DD/MM/YY"));
+        setMonthdish(filterByTime(dish, "MM/YY"));
+        setYeardish(filterByTime(dish, "YY"));
     }, [sales, dish]);
+
+    // Animation Variants
+    const cardVariant = {
+        hidden: { opacity: 0, y: 50 },
+        visible: { opacity: 1, y: 0 },
+    };
+
+    const hoverEffect = { scale: 1.02, rotate: 0.5 };
+
+    // Reusable Card Component
+    const StatCard = ({ title, value, isCurrency = false, delay = 0 }) => (
+        <motion.div
+            variants={cardVariant}
+            initial="hidden"
+            animate="visible"
+            whileHover={hoverEffect}
+            transition={{ duration: 0.4, delay }}
+            className="max-w-sm p-6 text-center bg-white/80 backdrop-blur-md rounded-xl shadow-lg transform hover:shadow-2xl"
+        >
+            <h5 className="mb-3 text-lg font-semibold text-gray-800">
+                {title}
+            </h5>
+            <p className="text-xl font-bold text-gray-700">
+                {value.length > 0
+                    ? isCurrency
+                        ? rupee.format(
+                              value.reduce((acc, item) => acc + item.total, 0)
+                          )
+                        : value[0].itemName
+                    : "No Data"}
+            </p>
+        </motion.div>
+    );
+
     return (
-        <React.Fragment>
-            <div className=" grid grid-cols-1 mt-5 mb-5 md:grid-cols-2">
-                <section className=" grid grid-cols-2 gap-[2vw] w-fit inset-0 bg-black bg-opacity-25 backdrop-blur-sm rounded-md p-[4vw] m-[2vw] mr-[1vw] mb-[1vw]">
-                    <h1 className=" row-span-3 my-auto text-[2.88vw] text-center tracking-wide">
-                        Sales
+        <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8 }}
+            className="h-[91vh] flex justify-center bg-gradient-to-r from-gray-100 via-gray-200 to-gray-100"
+        >
+            <div className="w-full max-w-7xl px-6 py-12">
+                {/* Header */}
+                <motion.div
+                    initial={{ opacity: 0, y: -30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6 }}
+                    className="text-center mb-12"
+                >
+                    <h1 className="text-4xl font-extrabold text-gray-800">
+                        Sales Dashboard
                     </h1>
-                    <div className="text-center col-start-2 col-end-2 max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-                        <h5 className="mb-2 text-2xl font-bold tracking-widest text-gray-900 dark:text-white">
-                            Today's Sales
-                        </h5>
-                        <p className="font-normal text-gray-700 dark:text-gray-400">
-                            {dayfilteredsales.length > 0 ? (
-                                rupee.format(
-                                    dayfilteredsales.reduce(
-                                        (acc, item) => acc + item.total,
-                                        0
-                                    )
-                                )
-                            ) : (
-                                <span className="font-normal text-gray-700 dark:text-gray-400">
-                                    No Sales
-                                </span>
-                            )}
-                        </p>
-                    </div>
-                    <div className="text-center col-start-2 col-end-2 max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-                        <h5 className="mb-2 text-2xl font-bold tracking-widest text-gray-900 dark:text-white">
-                            Monthly Sales
-                        </h5>
-                        <p className="font-normal text-gray-700 dark:text-gray-400">
-                            {monthfiltered.length > 0 ? (
-                                rupee.format(
-                                    monthfiltered.reduce(
-                                        (acc, item) => acc + item.total,
-                                        0
-                                    )
-                                )
-                            ) : (
-                                <span className="font-normal text-gray-700 dark:text-gray-400">
-                                    No Sales
-                                </span>
-                            )}
-                        </p>
-                    </div>
-                    <div className="text-center col-start-2 col-end-2 max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-                        <h5 className="mb-2 text-2xl font-bold tracking-widest text-gray-900 dark:text-white">
-                            Yearly Sales
-                        </h5>
-                        <p className="font-normal text-gray-700 dark:text-gray-400">
-                            {yearfiltered.length > 0 ? (
-                                rupee.format(
-                                    yearfiltered.reduce(
-                                        (acc, item) => acc + item.total,
-                                        0
-                                    )
-                                )
-                            ) : (
-                                <span className="font-normal text-gray-700 dark:text-gray-400">
-                                    No Sales
-                                </span>
-                            )}
-                        </p>
-                    </div>
-                </section>
-                <section className=" grid grid-cols-2 gap-[2vw] w-fit inset-0 bg-black bg-opacity-25 backdrop-blur-sm rounded-md p-[4vw] m-[2vw] ml-[1vw] mb-[1vw]">
-                    <h1 className=" row-span-3 my-auto text-[2.88vw] text-center tracking-wide">
-                        Most Sold Dish
-                    </h1>
-                    <div className="text-center col-start-2 col-end-2 max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-                        <h5 className="mb-2 text-2xl font-bold tracking-widest text-gray-900 dark:text-white">
-                            Today
-                        </h5>
-                        <p className="font-normal text-gray-700 dark:text-gray-400">
-                            {daydish.length > 0 ? (
-                                daydish.flatMap((i, index) => {
-                                    if (index >= 1) {
-                                        return;
-                                    }
-                                    return (
-                                        <span key={index}>{i.itemName}</span>
-                                    );
-                                })
-                            ) : (
-                                <span className="font-normal text-gray-700 dark:text-gray-400">
-                                    No Sales
-                                </span>
-                            )}
-                        </p>
-                    </div>
-                    <div className="text-center col-start-2 col-end-2 max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-                        <h5 className="mb-2 text-2xl font-bold tracking-widest text-gray-900 dark:text-white">
-                            This Month
-                        </h5>
-                        <p className="font-normal text-gray-700 dark:text-gray-400">
-                            {monthdish.length > 0 ? (
-                                monthdish.flatMap((i, index) => {
-                                    if (index >= 1) {
-                                        return;
-                                    }
-                                    return (
-                                        <span key={index}>{i.itemName}</span>
-                                    );
-                                })
-                            ) : (
-                                <span className="font-normal text-gray-700 dark:text-gray-400">
-                                    No Sales
-                                </span>
-                            )}
-                        </p>
-                    </div>
-                    <div className="text-center col-start-2 col-end-2 max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-                        <h5 className="mb-2 text-2xl font-bold tracking-widest text-gray-900 dark:text-white">
-                            This Year
-                        </h5>
-                        <p className="font-normal text-gray-700 dark:text-gray-400">
-                            {yeardish.length > 0 ? (
-                                yeardish.flatMap((i, index) => {
-                                    if (index >= 1) {
-                                        return;
-                                    }
-                                    return (
-                                        <span key={index}>{i.itemName}</span>
-                                    );
-                                })
-                            ) : (
-                                <span className="font-normal text-gray-700 dark:text-gray-400">
-                                    No Sales
-                                </span>
-                            )}
-                        </p>
-                    </div>
-                </section>
+                    <p className="mt-2 text-lg text-gray-600">
+                        Track your sales and top-performing dishes in real-time.
+                    </p>
+                </motion.div>
+
+                {/* Main Content */}
+                <div className="grid gap-12 lg:grid-cols-2">
+                    {/* Sales Overview */}
+                    <section>
+                        <h2 className="mb-6 text-2xl font-bold text-gray-800">
+                            Sales Overview
+                        </h2>
+                        <div className="grid gap-8 sm:grid-cols-1 md:grid-cols-3">
+                            <StatCard
+                                title="Today's Sales"
+                                value={dayfilteredsales}
+                                isCurrency={true}
+                                delay={0.1}
+                            />
+                            <StatCard
+                                title="Monthly Sales"
+                                value={monthfiltered}
+                                isCurrency={true}
+                                delay={0.2}
+                            />
+                            <StatCard
+                                title="Yearly Sales"
+                                value={yearfiltered}
+                                isCurrency={true}
+                                delay={0.3}
+                            />
+                        </div>
+                    </section>
+
+                    {/* Most Sold Dish */}
+                    <section>
+                        <h2 className="mb-6 text-2xl font-bold text-gray-800">
+                            Most Sold Dish
+                        </h2>
+                        <div className="grid gap-8 sm:grid-cols-1 md:grid-cols-3">
+                            <StatCard
+                                title="Today"
+                                value={daydish}
+                                delay={0.4}
+                            />
+                            <StatCard
+                                title="This Month"
+                                value={monthdish}
+                                delay={0.5}
+                            />
+                            <StatCard
+                                title="This Year"
+                                value={yeardish}
+                                delay={0.6}
+                            />
+                        </div>
+                    </section>
+                </div>
             </div>
-        </React.Fragment>
+        </motion.div>
     );
 };
 
-export default sales;
+export default Sales;

@@ -1,18 +1,36 @@
 import { useContext, useEffect, useState } from "react";
-import { renderState } from "../../contexts/menuContext.jsx";
-import AddTable from "./addTable.jsx";
-import Table from "./table.jsx";
-import plus from "/plus.png";
-import api from "../../api/api.jsx";
 import moment from "moment";
+
+import { capitalize } from "../../utils/capitalize.jsx";
+
+import { renderState } from "../../contexts/menuContext.jsx";
 import { useAuthContext } from "../../hooks/useAuthContext.jsx";
 
-const tables = () => {
-    const { user } = useAuthContext();
-    const [render, setRender] = useContext(renderState);
+import AddTable from "./addTable.jsx";
+import Table from "./table.jsx";
+
+import { IoMdAddCircleOutline } from "react-icons/io";
+
+import api from "../../api/api.jsx";
+
+const Tables = () => {
+    const { user } = useAuthContext(); // Auth token
+    const [render, setRender] = useContext(renderState); // Trigger re-renders
+
+    // State for table data and modals
     const [tables, setTables] = useState([]);
+    const [isAddTableOpen, setAddTableOpen] = useState(false);
+    const [isTableDetailOpen, setTableDetailOpen] = useState(false);
+    const [tableData, setTableData] = useState({
+        tableNo: 0,
+        customerName: "",
+        occupants: 0,
+        veg_or_nonveg: "",
+    });
+
+    // Fetch tables data from API
     useEffect(() => {
-        const getTables = async () => {
+        const fetchTables = async () => {
             try {
                 const response = await api.get("/tables", {
                     headers: {
@@ -21,65 +39,79 @@ const tables = () => {
                 });
                 setTables(response.data);
             } catch (error) {
-                console.log(error.message);
+                console.error("Error fetching tables:", error.message);
             }
         };
+
         if (user) {
-            getTables();
+            fetchTables();
         }
-    }, [render]);
+    }, [render, user]);
+
+    // Update waiting time every second
     useEffect(() => {
         const intervalId = setInterval(() => {
-            const updatedTables = tables.map((t) => ({
-                ...t,
-                waitingTime: moment(t.createdAt).toNow().slice(2),
-            }));
-            setTables(updatedTables);
+            setTables((prevTables) =>
+                prevTables.map((table) => ({
+                    ...table,
+                    waitingTime: moment(table.createdAt).toNow(true),
+                }))
+            );
         }, 1000);
+
         return () => clearInterval(intervalId);
     }, [tables]);
-    const [isActive, setIsActive] = useState(false);
-    const [isTableOpen, setTableOpen] = useState(false);
-    const [tableData, setTableData] = useState({
-        tableNo: 0,
-        customerName: "",
-        occupants: 0,
-        veg_or_nonveg: "",
-    });
+
     return (
-        <div className="relative">
-            <AddTable isOpen={isActive} setIsOpen={setIsActive} />
+        <div className="relative h-[91vh] bg-gradient-to-b from-gray-100 to-gray-300">
+            {/* Add Table Modal */}
+            <AddTable isOpen={isAddTableOpen} setIsOpen={setAddTableOpen} />
+
+            {/* Table Detail Modal */}
             <Table
-                isOpen={isTableOpen}
-                setIsOpen={setTableOpen}
+                isOpen={isTableDetailOpen}
+                setIsOpen={setTableDetailOpen}
                 table={tableData}
             />
-            <h1 className=" text-center text-3xl font-bold">Live Tables</h1>
-            <button
-                onClick={() => {
-                    setIsActive(!isActive);
-                }}
-                className=" fixed bg-blue-700 text-white bg-opacity-80 p-[0.5vw] bottom-[3vw] left-[3vw] rounded-full"
-            >
-                <img src={plus} alt="Add Table" className=" size-12 invert" />
-            </button>
-            <main className="flex items-center justify-center gap-10 mt-8 flex-wrap">
-                {tables.map((t, index) => (
+
+            {/* Header */}
+            <h1 className="text-center text-4xl font-extrabold mb-6 text-gray-800 tracking-tight">
+                Live Tables
+            </h1>
+
+            {/* Floating Add Button */}
+            {!isAddTableOpen && !isTableDetailOpen && (
+                <button
+                    onClick={() => setAddTableOpen(true)}
+                    className="fixed bottom-8 right-8 bg-blue-600 text-white p-5 rounded-full shadow-xl hover:bg-blue-700 transition-transform transform active:scale-95 focus:outline-none focus:ring-4 focus:ring-blue-300"
+                >
+                    <IoMdAddCircleOutline className="text-4xl" />
+                </button>
+            )}
+
+            {/* Table Display */}
+            <main className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 p-6 md:px-12 lg:px-20">
+                {tables.map((table, index) => (
                     <button
                         key={index}
                         onClick={() => {
-                            setTableOpen(!isTableOpen);
-                            setTableData(t);
+                            setTableDetailOpen(true);
+                            setTableData(table);
                         }}
-                        className="space-y-[1vw] flex flex-col justify-center items-center cursor-pointer size-[200px] rounded-full bg-sky-500 bg-opacity-55 border border-black transition-all active:bg-opacity-65 active:scale-105 active:font-extrabold"
+                        className="flex flex-col items-center justify-center w-full max-w-xs mx-auto p-6 bg-white rounded-lg shadow-lg hover:shadow-xl transition-transform transform hover:scale-105"
                     >
-                        <h1 className="text-3xl font-bold ">{t.tableNo}</h1>
-                        <div>
-                            {" "}
-                            {!t.waitingTime
-                                ? "Just Now"
-                                : `arrived ${t.waitingTime} ago`}{" "}
-                        </div>
+                        <h1 className="text-2xl font-semibold text-gray-800">
+                            Table {table.tableNo}
+                        </h1>
+                        <p className="mt-2 text-lg text-gray-500">
+                            {table.waitingTime
+                                ? `Arrived ${table.waitingTime} ago`
+                                : "Just Now"}
+                        </p>
+                        <p className="mt-1 text-sm text-gray-600">
+                            {table.occupants} occupant(s) |{" "}
+                            {capitalize(table.veg_or_nonveg)}
+                        </p>
                     </button>
                 ))}
             </main>
@@ -87,4 +119,4 @@ const tables = () => {
     );
 };
 
-export default tables;
+export default Tables;

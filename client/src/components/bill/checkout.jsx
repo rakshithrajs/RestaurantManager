@@ -1,19 +1,30 @@
 import React, { useEffect, useState } from "react";
-import api from "../../api/api.jsx";
 import { useNavigate, useParams } from "react-router";
-import { capitalize } from "../../utils/capitalize.jsx";
 import moment from "moment";
+
+import api from "../../api/api.jsx";
+
+import { capitalize } from "../../utils/capitalize.jsx";
 import rupee from "../../utils/currencyFormatter.jsx";
+
 import PaymentDone from "./paymentDone.jsx";
+
 import { useAuthContext } from "../../hooks/useAuthContext.jsx";
 
-const checkout = () => {
+const Checkout = () => {
+    //for auth token
     const { user } = useAuthContext();
-    const navigate = useNavigate;
+    
+    //for navigation
+    const navigate = useNavigate();
+    
+    //for bill generation
     const [data, setData] = useState();
     const [orderData, setOrderData] = useState();
-    const [visible, setVisible] = useState(false);
     const { id } = useParams();
+    
+    const [visible, setVisible] = useState(false);
+
     useEffect(() => {
         const getDetails = async () => {
             try {
@@ -24,154 +35,136 @@ const checkout = () => {
                 });
                 setData(response.data[0]);
             } catch (error) {
-                console.log(error);
+                console.error("Error fetching checkout details:", error);
             }
         };
-        if (user) {
-            getDetails();
-        }
-    }, []);
+        if (user) getDetails();
+    }, [id, user]);
+
     useEffect(() => {
         if (data) {
             const total = data.items.reduce(
                 (acc, item) => acc + item.price * item.quantity * 1.05,
                 0
             );
-            setOrderData({ ...data, total: total });
+            setOrderData({ ...data, total });
         }
     }, [data]);
+
     const handlePayment = async () => {
         try {
             setVisible(true);
-            const order = await api.post("/checkout/history", orderData, {
-                headers: {
-                    Authorization: `Bearer ${user.data.token}`,
-                },
+            await api.post("/checkout/history", orderData, {
+                headers: { Authorization: `Bearer ${user.data.token}` },
             });
-            const response = await api.delete(`/tables/${id}`, {
-                headers: {
-                    Authorization: `Bearer ${user.data.token}`,
-                },
+            await api.delete(`/tables/${id}`, {
+                headers: { Authorization: `Bearer ${user.data.token}` },
             });
-            const res = await api.delete(`/orders/all/${id}`, {
-                headers: {
-                    Authorization: `Bearer ${user.data.token}`,
-                },
+            await api.delete(`/orders/all/${id}`, {
+                headers: { Authorization: `Bearer ${user.data.token}` },
             });
-            console.log(response.data);
-            console.log(res.data);
-            console.log(order.data);
+
             setTimeout(() => {
                 navigate("/tables");
             }, 1000);
         } catch (error) {
-            console.log(error.message);
+            console.error("Payment processing error:", error);
         }
     };
+
     return (
         <>
             {visible && <PaymentDone setVisible={setVisible} />}
-            <div className="max-w-[85rem] px-4 sm:px-6 lg:px-8 my-4 sm:my-10 sm:w-11/12 lg:w-3/4 mx-auto">
-                <div className="flex flex-col p-4 sm:p-10 bg-white shadow-md rounded-xl">
+            <div className="max-w-7xl mx-auto p-6 sm:p-8 lg:p-12 my-6">
+                <div className="bg-gradient-to-tl from-gray-100 from-80% via-gray-400 via-50% to-gray-100 to-10% p-8 sm:p-12 rounded-xl shadow-lg">
+                    {/* Invoice Header */}
                     <div>
-                        <h2 className="text-2xl md:text-3xl font-semibold text-gray-800">
-                            Bill #
-                        </h2>
-                        <span className="mt-1 block text-gray-500">
+                        <h2 className="text-3xl font-bold">Invoice</h2>
+                        <p className="mt-2 text-lg opacity-80">
                             {data && data._id}
-                        </span>
+                        </p>
                     </div>
-                    <div className="mt-8 grid sm:grid-cols-2 gap-3">
+
+                    {/* Invoice Details */}
+                    <div className="mt-8 grid gap-6 sm:grid-cols-2">
                         <div>
-                            <h3 className="text-lg font-semibold text-gray-800">
-                                Billed to:
+                            <h3 className="text-lg font-semibold">
+                                Billed To:
                             </h3>
-                            <span className=" block text-gray-500">
+                            <p className="mt-1 text-lg">
                                 {data && capitalize(data.customerName)}
-                            </span>
-                            <h3 className="text-lg font-semibold text-gray-800">
-                                Phone No
+                            </p>
+                            <h3 className="mt-4 text-lg font-semibold">
+                                Phone No:
                             </h3>
-                            <span className=" block text-gray-500">
+                            <p className="mt-1 text-lg">
                                 {data && data.customerPhone}
-                            </span>
+                            </p>
                         </div>
-                        <div className="text-end grid-cols-1">
-                            <h3 className="text-lg font-semibold text-gray-800">
-                                Invoice date:
+                        <div className="text-sm-right">
+                            <h3 className="text-lg font-semibold">
+                                Invoice Date:
                             </h3>
-                            <span className=" block text-gray-500">
+                            <p className="mt-1 text-lg">
                                 {data &&
                                     moment(data.createdAt).format("DD/MM/YYYY")}
-                            </span>
+                            </p>
                         </div>
                     </div>
-                    <table className="border border-gray-200 mt-6  rounded-lg w-full">
-                        <thead>
-                            <tr>
-                                <th className=" text-start text-gray-500 uppercase">
-                                    Item
-                                </th>
-                                <th className=" text-start text-gray-500 uppercase">
-                                    Qty
-                                </th>
-                                <th className=" text-start text-gray-500 uppercase">
-                                    Rate
-                                </th>
-                                <th className=" text-start text-gray-500 uppercase">
-                                    Amount
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {data &&
-                                data.items.map((i) => (
-                                    <tr key={i._id}>
-                                        <td className="col-span-full sm:col-span-2">
-                                            <h5 className="sm:hidden text-xs font-medium text-gray-500 uppercase">
-                                                Item
-                                            </h5>
-                                            <p className="font-medium text-gray-800">
-                                                {i.name}
-                                            </p>
-                                        </td>
-                                        <td>
-                                            <h5 className="sm:hidden text-xs font-medium text-gray-500 uppercase">
-                                                Qty
-                                            </h5>
-                                            <p className="text-gray-800">
-                                                {i.quantity}
-                                            </p>
-                                        </td>
-                                        <td>
-                                            <h5 className="sm:hidden text-xs font-medium text-gray-500 uppercase">
-                                                Rate
-                                            </h5>
-                                            <p className="text-gray-800">
-                                                {rupee.format(i.price)}
-                                            </p>
-                                        </td>
-                                        <td>
-                                            <h5 className="sm:hidden text-xs font-medium text-gray-500 uppercase">
-                                                Amount
-                                            </h5>
-                                            <p className=" text-gray-800">
+
+                    {/* Items Table */}
+                    <div className="overflow-auto mt-8">
+                        <table className="w-full border border-black">
+                            <thead>
+                                <tr>
+                                    <th className="py-2 px-4 text-sm text-center font-medium uppercase border-b border-black">
+                                        Item
+                                    </th>
+                                    <th className="py-2 px-4 text-sm text-center font-medium uppercase border-b border-black">
+                                        Quantity
+                                    </th>
+                                    <th className="py-2 px-4 text-sm text-center font-medium uppercase border-b border-black">
+                                        Rate
+                                    </th>
+                                    <th className="py-2 px-4 text-sm text-center font-medium uppercase border-b border-black">
+                                        Amount
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {data &&
+                                    data.items.map((item) => (
+                                        <tr
+                                            key={item._id}
+                                        >
+                                            <td className="py-4 px-4 border-b border-b-black text-center">
+                                                {item.name}
+                                            </td>
+                                            <td className="py-4 px-4 border-b border-b-black text-center">
+                                                {item.quantity}
+                                            </td>
+                                            <td className="py-4 px-4 border-b border-b-black text-center">
+                                                {rupee.format(item.price)}
+                                            </td>
+                                            <td className="py-4 px-4 border-b border-b-black text-center">
                                                 {rupee.format(
-                                                    i.quantity * i.price
+                                                    item.quantity * item.price
                                                 )}
-                                            </p>
-                                        </td>
-                                    </tr>
-                                ))}
-                        </tbody>
-                    </table>
-                    <table className="mt-8 mr-[5vw]">
-                        <tbody>
-                            <tr>
-                                <th className=" text-start font-semibold text-gray-800">
+                                            </td>
+                                        </tr>
+                                    ))}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {/* Summary Table */}
+                    <div className="mt-8 text-right">
+                        <div className="space-y-4">
+                            <div className="flex justify-between">
+                                <span className="text-lg font-semibold">
                                     Total:
-                                </th>
-                                <td className="px-[2vw] text-gray-500">
+                                </span>
+                                <span className="text-lg">
                                     {data &&
                                         rupee.format(
                                             data.items.reduce(
@@ -181,13 +174,13 @@ const checkout = () => {
                                                 0
                                             )
                                         )}
-                                </td>
-                            </tr>
-                            <tr>
-                                <th className=" text-start font-semibold text-gray-800">
-                                    Tax:
-                                </th>
-                                <td className="px-[2vw] text-gray-500">
+                                </span>
+                            </div>
+                            <div className="flex justify-between">
+                                <span className="text-lg font-semibold">
+                                    Tax (5%):
+                                </span>
+                                <span className="text-lg">
                                     {data &&
                                         rupee.format(
                                             data.items.reduce(
@@ -199,13 +192,13 @@ const checkout = () => {
                                                 0
                                             )
                                         )}
-                                </td>
-                            </tr>
-                            <tr>
-                                <th className=" text-start font-semibold text-gray-800">
-                                    Total Amount to be Paid:
-                                </th>
-                                <td className="px-[2vw] text-gray-500">
+                                </span>
+                            </div>
+                            <div className="flex justify-between">
+                                <span className="text-lg font-bold">
+                                    Total Amount:
+                                </span>
+                                <span className="text-lg font-bold">
                                     {data &&
                                         rupee.format(
                                             data.items.reduce(
@@ -217,23 +210,27 @@ const checkout = () => {
                                                 0
                                             )
                                         )}
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <div className="mt-8 sm:mt-12 text-lg font-semibold text-gray-800">
-                        Thank you!
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="mt-10 text-center text-lg font-semibold">
+                        Thank you for your business!
                     </div>
                 </div>
+
+                {/* Payment Button */}
+                <div className="mt-6 flex justify-center">
+                    <button
+                        onClick={handlePayment}
+                        className="py-3 px-8 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg shadow-md transition-transform duration-300 transform hover:scale-105"
+                    >
+                        Proceed to Payment
+                    </button>
+                </div>
             </div>
-            <button
-                onClick={handlePayment}
-                className="ml-[45%] mb-[2vw] py-2 px-4 font-semibold rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-            >
-                Proceed to Payment
-            </button>
         </>
     );
 };
 
-export default checkout;
+export default Checkout;

@@ -1,25 +1,33 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
+
 import Navbar from "./components/navbar.jsx";
 import Menu from "./components/menu/menu.jsx";
 import Tables from "./components/tables/tables.jsx";
 import AllOrders from "./components/orders/allOrders.jsx";
-import { renderState } from "./contexts/menuContext.jsx";
-import { Route, Routes, Navigate } from "react-router";
 import PlaceOrder from "./components/orders/placeOrder.jsx";
 import Checkout from "./components/bill/checkout.jsx";
 import Sales from "./components/sales/sales.jsx";
 import Login from "./components/auth/login.jsx";
 import Signup from "./components/auth/signup.jsx";
+
+import { renderState } from "./contexts/menuContext.jsx";
 import { useAuthContext } from "./hooks/useAuthContext.jsx";
+
+import { Route, Routes, Navigate } from "react-router";
 
 //TODO: implement pagination in menu and order
 
 const App = () => {
+    //for auth
     const { user } = useAuthContext();
+
+    //for rendering
     const [render, setRender] = useState(0);
     return (
         <>
             <Navbar />
+
+            {/* react router dom */}
             <renderState.Provider value={[render, setRender]}>
                 <Routes>
                     <Route

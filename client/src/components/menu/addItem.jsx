@@ -1,10 +1,19 @@
 import React, { useContext, useState, useEffect } from "react";
+
 import axios from "../../api/api.jsx";
+
 import { renderState } from "../../contexts/menuContext.jsx";
+
 import { useAuthContext } from "../../hooks/useAuthContext.jsx";
 
-const addItem = ({ isVisible, setIsVisible }) => {
+const AddItem = ({ isVisible, setIsVisible }) => {
+    //for auth token
+    const { user } = useAuthContext();
+
+    //for rendering
     const [render, setRender] = useContext(renderState);
+
+    //form data
     const [formData, setFormData] = useState({
         item: "",
         price: 0.0,
@@ -12,7 +21,6 @@ const addItem = ({ isVisible, setIsVisible }) => {
         description: "",
         category: "",
     });
-    const { user } = useAuthContext();
     const [category, setCategory] = useState([]);
     useEffect(() => {
         const fetchCategories = async () => {
@@ -29,13 +37,15 @@ const addItem = ({ isVisible, setIsVisible }) => {
         };
         fetchCategories();
     }, []);
+
+    //for submitting
     const handleSubmit = async (event) => {
         event.preventDefault();
         if (!user) {
             alert("Please login to add items");
+            return;
         }
         try {
-            console.log(formData.category);
             const response = await axios.post("/menu", formData, {
                 headers: {
                     Authorization: `Bearer ${user.data.token}`,
@@ -45,7 +55,7 @@ const addItem = ({ isVisible, setIsVisible }) => {
         } catch (error) {
             console.error(error.message);
         }
-        setIsVisible(!isVisible);
+        setIsVisible(false);
         setRender(render + 1);
         setFormData({
             item: "",
@@ -55,177 +65,192 @@ const addItem = ({ isVisible, setIsVisible }) => {
             category: "",
         });
     };
+
     if (!isVisible) return null;
+
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-25 backdrop-blur-sm flex justify-center items-center">
-            <div className="w-[50%] flex flex-col">
-                <div className="bg-white p-2 rounded">
-                    <h2 className="mb-4 text-2xl text-center font-bold text-gray-900">
-                        Add a new product
-                    </h2>
-                    <form
-                        method="post"
-                        className=" p-4"
-                        onSubmit={handleSubmit}
-                        autoComplete="off"
-                        name="form"
-                    >
-                        <div className="grid gap-4 sm:grid-cols-2 sm:gap-6">
-                            <div className="sm:col-span-2">
-                                <label
-                                    htmlFor="item"
-                                    className="block mb-2 text-sm font-medium text-gray-90"
-                                >
-                                    Item Name
-                                </label>
-                                <input
-                                    type="text"
-                                    name="item"
-                                    id="item"
-                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 "
-                                    placeholder="Type Item name"
-                                    required
-                                    value={formData.item}
-                                    onChange={(event) =>
-                                        setFormData({
-                                            ...formData,
-                                            item: event.target.value,
-                                        })
-                                    }
-                                />
-                            </div>
-                            <div className="w-full">
-                                <label
-                                    htmlFor="price"
-                                    className="block mb-2 text-sm font-medium text-gray-90"
-                                >
-                                    Price
-                                </label>
-                                <input
-                                    type="number"
-                                    name="price"
-                                    id="price"
-                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 "
-                                    required
-                                    placeholder="Add the price"
-                                    value={formData.price}
-                                    onChange={(event) =>
-                                        setFormData({
-                                            ...formData,
-                                            price: event.target.value,
-                                        })
-                                    }
-                                />
-                            </div>
-                            <div>
-                                <label
-                                    htmlFor="category"
-                                    className="block mb-2 text-sm font-medium text-gray-90"
-                                >
-                                    Category
-                                </label>
-                                <select
-                                    id="category"
-                                    name="category"
-                                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 "
-                                    value={formData.category}
-                                    onChange={(event) => {
-                                        setFormData({
-                                            ...formData,
-                                            category: event.target.value,
-                                        });
-                                    }}
-                                >
-                                    <option>Select category</option>
-                                    {category.map((c) => (
-                                        <option key={c._id} value={c._id}>
-                                            {c.name}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-                            <div className="flex gap-4 items-center">
-                                <label
-                                    htmlFor="veg"
-                                    className="block mb-2 text-sm font-medium text-gray-90"
-                                >
-                                    Veg
-                                </label>
-                                <input
-                                    type="radio"
-                                    name="veg_or_nonveg"
-                                    value="veg"
-                                    id="veg"
-                                    onChange={(event) =>
-                                        setFormData({
-                                            ...formData,
-                                            veg_or_nonveg: event.target.value,
-                                        })
-                                    }
-                                />
-                                <label
-                                    htmlFor="nonveg"
-                                    className="block mb-2 text-sm font-medium text-gray-90"
-                                >
-                                    Non Veg
-                                </label>
-                                <input
-                                    type="radio"
-                                    name="veg_or_nonveg"
-                                    value="non-veg"
-                                    id="nonveg"
-                                    onChange={(event) =>
-                                        setFormData({
-                                            ...formData,
-                                            veg_or_nonveg: event.target.value,
-                                        })
-                                    }
-                                />
-                            </div>
-                            <div className="sm:col-span-2">
-                                <label
-                                    htmlFor="description"
-                                    className="block mb-2 text-sm font-medium text-gray-90"
-                                >
-                                    Description
-                                </label>
-                                <textarea
-                                    id="description"
-                                    rows="8"
-                                    name="description"
-                                    className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 "
-                                    placeholder="Item Description"
-                                    value={formData.description}
-                                    onChange={(event) =>
-                                        setFormData({
-                                            ...formData,
-                                            description: event.target.value,
-                                        })
-                                    }
-                                ></textarea>
-                            </div>
-                        </div>
-                        <div className="flex">
-                            <button
-                                type="submit"
-                                className="flex items-center px-5 py-2.5 mt-2 text-sm font-medium text-center rounded-lg focus:ring-4 focus:ring-primary-200"
+        <div className="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm flex justify-center items-center z-50">
+            <div className="bg-white p-8 rounded-xl shadow-xl w-full max-w-lg mx-auto">
+                <h2 className="mb-6 text-3xl font-bold text-gray-800 text-center border-b pb-4">
+                    Add a New Product
+                </h2>
+                <form onSubmit={handleSubmit} className="space-y-6">
+                    {/* Item Name */}
+                    <div>
+                        <label
+                            htmlFor="item"
+                            className="block text-sm font-medium text-gray-700"
+                        >
+                            Item Name
+                        </label>
+                        <input
+                            type="text"
+                            id="item"
+                            name="item"
+                            className="mt-2 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 p-3 bg-gray-50"
+                            placeholder="Enter item name"
+                            value={formData.item}
+                            onChange={(e) =>
+                                setFormData({
+                                    ...formData,
+                                    item: e.target.value,
+                                })
+                            }
+                            required
+                        />
+                    </div>
+
+                    {/* Price */}
+                    <div>
+                        <label
+                            htmlFor="price"
+                            className="block text-sm font-medium text-gray-700"
+                        >
+                            Price ($)
+                        </label>
+                        <input
+                            type="number"
+                            id="price"
+                            name="price"
+                            className="mt-2 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 p-3 bg-gray-50"
+                            placeholder="Enter price"
+                            value={formData.price}
+                            onChange={(e) =>
+                                setFormData({
+                                    ...formData,
+                                    price: e.target.value,
+                                })
+                            }
+                            required
+                        />
+                    </div>
+
+                    {/* Category */}
+                    <div>
+                        <label
+                            htmlFor="category"
+                            className="block text-sm font-medium text-gray-700"
+                        >
+                            Category
+                        </label>
+                        <select
+                            id="category"
+                            name="category"
+                            className="mt-2 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 p-3 bg-gray-50"
+                            value={formData.category}
+                            onChange={(e) =>
+                                setFormData({
+                                    ...formData,
+                                    category: e.target.value,
+                                })
+                            }
+                        >
+                            <option value="" disabled>
+                                Select category
+                            </option>
+                            {category.map((c) => (
+                                <option key={c._id} value={c._id}>
+                                    {c.name}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
+                    {/* Veg or Non-Veg */}
+                    <div className="flex items-center gap-6">
+                        <span className="text-sm font-medium text-gray-700">
+                            Type:
+                        </span>
+                        <div className="flex items-center">
+                            <input
+                                type="radio"
+                                id="veg"
+                                name="veg_or_nonveg"
+                                value="veg"
+                                checked={formData.veg_or_nonveg === "veg"}
+                                onChange={(e) =>
+                                    setFormData({
+                                        ...formData,
+                                        veg_or_nonveg: e.target.value,
+                                    })
+                                }
+                                className="h-4 w-4 text-green-600 focus:ring-green-500"
+                            />
+                            <label
+                                htmlFor="veg"
+                                className="text-sm text-gray-700"
                             >
-                                Add product
-                            </button>
-                            <button
-                                className=" flex items-center px-5 py-2.5 mt-2 text-sm font-medium text-center rounded-lg text-red-600  focus:ring-4 focus:ring-primary-200"
-                                onClick={() => {
-                                    setIsVisible(!isVisible);
-                                }}
-                            >
-                                Cancel
-                            </button>
+                                Veg
+                            </label>
                         </div>
-                    </form>
-                </div>
+                        <div className="flex items-center">
+                            <input
+                                type="radio"
+                                id="nonveg"
+                                name="veg_or_nonveg"
+                                value="non-veg"
+                                checked={formData.veg_or_nonveg === "non-veg"}
+                                onChange={(e) =>
+                                    setFormData({
+                                        ...formData,
+                                        veg_or_nonveg: e.target.value,
+                                    })
+                                }
+                                className="h-4 w-4 text-red-600 focus:ring-red-500"
+                            />
+                            <label
+                                htmlFor="nonveg"
+                                className="text-sm text-gray-700"
+                            >
+                                Non-Veg
+                            </label>
+                        </div>
+                    </div>
+
+                    {/* Description */}
+                    <div>
+                        <label
+                            htmlFor="description"
+                            className="block text-sm font-medium text-gray-700"
+                        >
+                            Description
+                        </label>
+                        <textarea
+                            id="description"
+                            rows="4"
+                            name="description"
+                            className="mt-2 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 p-3 bg-gray-50"
+                            placeholder="Describe the item"
+                            value={formData.description}
+                            onChange={(e) =>
+                                setFormData({
+                                    ...formData,
+                                    description: e.target.value,
+                                })
+                            }
+                        ></textarea>
+                    </div>
+
+                    {/* Buttons */}
+                    <div className="flex justify-between items-center mt-6">
+                        <button
+                            type="submit"
+                            className="px-6 py-2 bg-indigo-500 text-white font-medium rounded-lg shadow hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition duration-150"
+                        >
+                            Add Product
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => setIsVisible(false)}
+                            className="px-6 py-2 bg-gray-200 text-gray-800 font-medium rounded-lg shadow hover:bg-gray-300 transition duration-150"
+                        >
+                            Cancel
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     );
 };
 
-export default addItem;
+export default AddItem;

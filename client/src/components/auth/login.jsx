@@ -1,105 +1,127 @@
-import React,{useState} from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useLogin } from "../../hooks/useLogin.jsx";
+import { FaEnvelope, FaLock } from "react-icons/fa";
+import { motion } from "framer-motion";
 
-const logIn = () => {
+const LogIn = () => {
     const { login, loading, error } = useLogin();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
             await login(email, password);
         } catch (error) {
-            console.log(error);
+            console.error("Login error:", error);
         }
     };
+
     return (
-        <div className="bg-gray-100 flex justify-center items-center">
-            <div className="lg:p-[135px] p-8 w-full lg:w-1/2">
-                <h1 className="text-2xl font-semibold mb-4">Login</h1>
-                <form action="#" method="POST">
-                    <div className="mb-4">
-                        <label htmlFor="email" className="block text-gray-600">
-                            Email
-                        </label>
+        <div className="h-[87vh] flex items-center justify-center bg-gradient-formal">
+            <motion.div
+                className="bg-white shadow-xl rounded-lg p-10 w-full max-w-md"
+                initial={{ y: 50, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+            >
+                {/* Header */}
+                <h1 className="text-3xl font-bold text-center mb-6 text-blue-600">
+                    Welcome Back!
+                </h1>
+                <form onSubmit={handleSubmit}>
+                    {/* Email Input */}
+                    <div className="mb-4 relative">
+                        <FaEnvelope className="absolute left-4 top-3 text-gray-400" />
                         <input
                             type="email"
                             id="email"
                             name="email"
-                            onChange={(e) => {
-                                setEmail(e.target.value);
-                            }}
-                            className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-blue-500"
+                            onChange={(e) => setEmail(e.target.value)}
+                            className="w-full border border-gray-300 rounded-lg py-3 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300 bg-gray-50"
+                            placeholder="Email Address"
                             autoComplete="off"
+                            required
                         />
                     </div>
-                    <div className="mb-4">
-                        <label
-                            htmlFor="password"
-                            className="block text-gray-600"
-                        >
-                            Password
-                        </label>
+
+                    {/* Password Input */}
+                    <div className="mb-4 relative">
+                        <FaLock className="absolute left-4 top-3 text-gray-400" />
                         <input
                             type="password"
                             id="password"
                             name="password"
-                            onChange={(e) => {
-                                setPassword(e.target.value);
-                            }}
-                            className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-blue-500"
+                            onChange={(e) => setPassword(e.target.value)}
+                            className="w-full border border-gray-300 rounded-lg py-3 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300 bg-gray-50"
+                            placeholder="Password"
                             autoComplete="off"
+                            required
                         />
                     </div>
-                    <div className="mb-4 flex items-center">
-                        <input
-                            type="checkbox"
-                            id="remember"
-                            name="remember"
-                            className="text-blue-500"
-                        />
-                        <label
-                            htmlFor="remember"
-                            className="text-gray-600 ml-2"
-                        >
-                            Remember Me
+
+                    {/* Remember Me Checkbox */}
+                    <div className="mb-6 flex items-center justify-between">
+                        <label htmlFor="remember" className="flex items-center">
+                            <input
+                                type="checkbox"
+                                id="remember"
+                                name="remember"
+                                className="rounded text-blue-500 focus:ring-blue-500"
+                            />
+                            <span className="ml-2 text-gray-600">
+                                Remember Me
+                            </span>
                         </label>
-                    </div>
-                    <div id="forgot" className="mb-6 text-blue-500">
-                        <a href="#" className="hover:underline">
-                            Forgot Password..?
+                        <a
+                            href="#"
+                            className="text-blue-500 text-sm hover:underline"
+                        >
+                            Forgot Password?
                         </a>
                     </div>
+
+                    {/* Submit Button */}
                     <button
-                        id="submit"
-                        onClick={handleSubmit}
                         type="submit"
-                        className={
-                            !loading
-                                ? "bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-md py-2 px-4 w-full"
-                                : "bg-blue-500 opacity-50 hover:bg-blue-600 text-white font-semibold rounded-md py-2 px-4 w-full"
-                        }
+                        disabled={loading}
+                        className={`bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg w-full shadow-md transform transition-transform duration-300 ${
+                            loading
+                                ? "opacity-50 cursor-not-allowed"
+                                : "hover:scale-105"
+                        }`}
                     >
-                        Login
+                        {loading ? "Logging in..." : "Log In"}
                     </button>
+
+                    {/* Error Message */}
                     {error && (
                         <div
-                            className="bg-red-100 border mt-[1vw] border-red-400 text-red-700 px-4 py-3 rounded relative"
+                            className="bg-red-100 border mt-6 border-red-400 text-red-700 px-4 py-3 rounded-lg shadow-md animate-fadeIn"
                             role="alert"
                         >
-                            <strong className="font-bold">{error}</strong>
+                            <strong className="font-bold">Error: </strong>
+                            {error}
                         </div>
                     )}
                 </form>
-                <div className="mt-6 text-blue-500 text-center">
-                    <Link to={"/signup"} className="hover:underline">
-                        Sign up Here
+
+                {/* Link to Sign Up */}
+                <div className="mt-6 text-center">
+                    <span className="text-gray-600">
+                        Don't have an account?{" "}
+                    </span>
+                    <Link
+                        to="/signup"
+                        className="text-blue-600 hover:text-blue-800 font-medium hover:underline transition duration-300"
+                    >
+                        Sign up here!
                     </Link>
                 </div>
-            </div>
+            </motion.div>
         </div>
     );
 };
 
-export default logIn;
+export default LogIn;
