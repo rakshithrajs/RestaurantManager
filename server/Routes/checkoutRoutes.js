@@ -1,6 +1,9 @@
 import { getTableBill, postOrderHistory } from "../controllers/checkout.js";
+
 import express from "express";
+
 import { requireAuth } from "../middleware/requireAuth.js";
+
 const router = express.Router();
 
 router.use(requireAuth);

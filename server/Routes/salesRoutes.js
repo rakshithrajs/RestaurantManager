@@ -1,6 +1,9 @@
 import { getDish, getSales } from "../controllers/sales.js";
+
 import express from "express";
+
 import { requireAuth } from "../middleware/requireAuth.js";
+
 const router = express.Router();
 
 router.use(requireAuth);

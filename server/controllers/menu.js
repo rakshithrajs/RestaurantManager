@@ -1,26 +1,33 @@
 import mongoose from "mongoose";
+
 import { menuModel } from "../models/menuModel.js";
 
+import { CustomError } from "../utils/customError.js";
+
+//to just get all the items in the restaurant
 export const getMenuItems = async (req, res) => {
     try {
         const menuItems = await menuModel.find();
         res.status(200).json(menuItems);
-    } catch (err) {
-        res.status(404).json({ message: err.message });
-        console.log(err);
+    } catch (error) {
+        const err = new CustomError(error.message, error.statusCode);
+        next(err);
     }
 };
 
+//to get one specific item in the menu
 export const getOneItem = async (req, res) => {
     const id = req.params.id;
     try {
         const item = await menuModel.find({ _id: id });
         res.status(200).json(item);
-    } catch (err) {
-        res.status(404).json({ message: err.message });
+    } catch (error) {
+        const err = new CustomError(error.message, error.statusCode);
+        next(err);
     }
 };
 
+//add an tiem into menu
 export const addMenuItems = async (req, res) => {
     const item = req.body;
     const newItem = new menuModel(item);
@@ -28,12 +35,13 @@ export const addMenuItems = async (req, res) => {
         await newItem.save();
         res.status(201).json(newItem);
         console.log(newItem);
-    } catch (err) {
-        console.log(err);
-        res.status(409).json({ message: err.message });
+    } catch (error) {
+        const err = new CustomError(error.message, error.statusCode);
+        next(err);
     }
 };
 
+//update an time on the menu
 export const updateMenuItems = async (req, res) => {
     const { id: _id } = req.params;
     const updatedData = req.body;
@@ -44,11 +52,13 @@ export const updateMenuItems = async (req, res) => {
             new: true,
         });
         res.status(200).json(updates);
-    } catch (err) {
-        res.status(409).json({ message: err.message });
+    } catch (error) {
+        const err = new CustomError(error.message, error.statusCode);
+        next(err);
     }
 };
 
+//to delete the item in the menu
 export const deleteItems = async (req, res) => {
     const { id } = req.params;
     try {
@@ -57,10 +67,12 @@ export const deleteItems = async (req, res) => {
         const deleted = await menuModel.deleteOne({ _id: id });
         res.status(200).json(deleted);
     } catch (error) {
-        res.status(404).json({ message: error.message });
+        const err = new CustomError(error.message, error.statusCode);
+        next(err);
     }
 };
 
+//delete all items in the category
 export const deleteByCategory = async (req, res) => {
     const { id } = req.params;
     try {
@@ -69,6 +81,7 @@ export const deleteByCategory = async (req, res) => {
         });
         res.status(200).json(itemsByCategory);
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        const err = new CustomError(error.message, error.statusCode);
+        next(err);
     }
 };

@@ -1,5 +1,7 @@
 import express from "express";
+
 import { requireAuth } from "../middleware/requireAuth.js";
+
 import {
     addMenuItems,
     getMenuItems,
@@ -8,6 +10,7 @@ import {
     deleteItems,
     deleteByCategory,
 } from "../controllers/menu.js";
+
 const router = express.Router();
 
 router.use(requireAuth);

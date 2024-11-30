@@ -1,5 +1,8 @@
 import { orderHistoryModel } from "../models/orderHistory.js";
 
+import { CustomError } from "../utils/customError.js";
+
+//sales outlook
 export const getSales = async (req, res) => {
     try {
         const sales = await orderHistoryModel.aggregate([
@@ -14,10 +17,12 @@ export const getSales = async (req, res) => {
         ]);
         res.status(200).json(sales);
     } catch (error) {
-        res.status(404).json({ message: error.message });
+        const err = new CustomError(error.message, error.statusCode);
+        next(err);
     }
 };
 
+//best dish
 export const getDish = async (req, res) => {
     try {
         const dish = await orderHistoryModel.aggregate([
@@ -46,6 +51,7 @@ export const getDish = async (req, res) => {
         ]);
         res.status(200).json(dish);
     } catch (error) {
-        res.status(404).json({ message: error.message });
+        const err = new CustomError(error.message, error.statusCode);
+        next(err);
     }
 };

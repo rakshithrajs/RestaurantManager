@@ -1,6 +1,6 @@
 import mongoose, { model } from "mongoose";
+
 const { Schema } = mongoose;
-import moment from "moment";
 
 const tableSchema = new Schema(
     {
@@ -30,6 +30,8 @@ const tableSchema = new Schema(
     { timestamps: true }
 );
 
+//for saving phone number with +91
+//TODO: make this dynamic by accessing the loacle of the user
 tableSchema.pre("save", function () {
     this.customerPhone = "+91" + this.customerPhone;
 });

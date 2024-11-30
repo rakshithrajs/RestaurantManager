@@ -1,9 +1,13 @@
 import { orderModel } from "../models/orderModel.js";
 
+import { CustomError } from "../utils/customError.js";
+
+//to dsiplay the orders in all order screen
 export const getOrders = async (req, res) => {
     try {
         const groupedOrders = await orderModel.aggregate([
             {
+                //joining tables
                 $lookup: {
                     from: "menumodels",
                     localField: "itemId",
@@ -47,10 +51,12 @@ export const getOrders = async (req, res) => {
         ]);
         res.status(200).json(groupedOrders);
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        const err = new CustomError(error.message, error.statusCode);
+        next(err);
     }
 };
 
+//get details on one particular order
 export const getOneOrder = async (req, res) => {
     const { id } = req.params;
     try {
@@ -60,10 +66,12 @@ export const getOneOrder = async (req, res) => {
             .populate("tableId", "tableNo");
         res.status(200).json(order);
     } catch (error) {
-        res.json({ message: error.message });
+        const err = new CustomError(error.message, error.statusCode);
+        next(err);
     }
 };
 
+//make an order
 export const addOrder = async (req, res) => {
     try {
         const order = req.body;
@@ -71,21 +79,24 @@ export const addOrder = async (req, res) => {
         await newOrder.save();
         res.status(201).json(newOrder);
     } catch (error) {
-        res.status(400).json({ message: error.message });
-        console.log(error.message);
+        const err = new CustomError(error.message, error.statusCode);
+        next(err);
     }
 };
 
+//delete an order
 export const deleteOrder = async (req, res) => {
     try {
         const { id } = req.params;
         const order = await orderModel.findByIdAndDelete(id);
         res.status(200).json(order);
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        const err = new CustomError(error.message, error.statusCode);
+        next(err);
     }
 };
 
+//delete all orders
 export const deleteAll = async (req, res) => {
     const { id } = req.params;
     try {
@@ -94,10 +105,12 @@ export const deleteAll = async (req, res) => {
         });
         res.status(200).json(deleteOrders);
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        const err = new CustomError(error.message, error.statusCode);
+        next(err);
     }
 };
 
+//update an order
 export const updateOrder = async (req, res) => {
     const { id } = req.params;
     const order = req.body;
@@ -107,6 +120,7 @@ export const updateOrder = async (req, res) => {
         });
         res.status(200).json(updatedOrder);
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        const err = new CustomError(error.message, error.statusCode);
+        next(err);
     }
 };

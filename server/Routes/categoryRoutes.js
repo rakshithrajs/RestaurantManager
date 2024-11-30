@@ -1,6 +1,12 @@
 import express from "express";
-import { getCategories, addCategories, deleteCategories } from "../controllers/category.js";
+
+import {
+    getCategories,
+    addCategories,
+    deleteCategories,
+} from "../controllers/category.js";
 import { requireAuth } from "../middleware/requireAuth.js";
+
 const router = express.Router();
 
 router.use(requireAuth);

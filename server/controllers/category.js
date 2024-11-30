@@ -1,15 +1,19 @@
-import {categoryModel} from "../models/itemCategory.js";
+import { categoryModel } from "../models/itemCategory.js";
 
+import { CustomError } from "../utils/customError.js";
+
+// getting all the categories available
 export const getCategories = async (req, res) => {
     try {
         const category = await categoryModel.find();
         res.status(200).json(category);
     } catch (error) {
-        res.status(404).json({ message: error.message });
-        console.log(error.message);
+        const err = new CustomError(error.message, error.statusCode);
+        next(err);
     }
 };
 
+// adding a new category
 export const addCategories = async (req, res) => {
     try {
         const category = req.body;
@@ -17,16 +21,19 @@ export const addCategories = async (req, res) => {
         await newCategory.save();
         res.status(200).json(newCategory);
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        const err = new CustomError(error.message, error.statusCode);
+        next(err);
     }
 };
 
+//delete a category
 export const deleteCategories = async (req, res) => {
     try {
         const id = req.params["id"];
         const category = await categoryModel.findByIdAndDelete(id);
         res.status(200).json(category);
     } catch (error) {
-        res.status(404).json({ message: error.message });
+        const err = new CustomError(error.message, error.statusCode);
+        next(err);
     }
 };

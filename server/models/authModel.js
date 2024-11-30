@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import validator from "validator";
 import mongoose from "mongoose";
+
 const { Schema, model } = mongoose;
 
 const userSchema = new Schema({

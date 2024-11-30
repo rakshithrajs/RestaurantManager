@@ -1,5 +1,8 @@
 import jwt from "jsonwebtoken";
+
 import { authModel } from "../models/authModel.js";
+
+import { CustomError } from "../utils/customError.js";
 
 export const requireAuth = async (req, res, next) => {
     const { authorization } = req.headers;
@@ -12,7 +15,7 @@ export const requireAuth = async (req, res, next) => {
         req.user = await authModel.find({ _id }).select("_id");
         next();
     } catch (error) {
-        console.log(error);
-        res.status(401).json({ error: "request not authorixed" });
+        const err = new CustomError(error.message, error.statusCode);
+        next(err);
     }
 };
