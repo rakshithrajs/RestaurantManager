@@ -11,17 +11,17 @@ export const useLogin = () => {
         setError(null);
         setLoading(true);
         try {
-            const response = await api.post("/auth/login", {
-                email,
-                password,
-            });
-            localStorage.setItem("user", JSON.stringify(response));
-            dispatch({ type: "LOGIN", payload: response });
+            const response = await api.post("/auth/login", { email, password });
+            localStorage.setItem("user", JSON.stringify(response.data));
+            dispatch({ type: "LOGIN", payload: response.data });
             setLoading(false);
         } catch (error) {
-            setError(error.response.data);
-            console.log(error);
+            const errorMessage =
+                capitalize(error.response?.data?.message) ||
+                "An unexpected error occurred.";
+            setError(errorMessage);
             setLoading(false);
+            throw error;
         }
     };
     return { login, loading, error };

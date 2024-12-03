@@ -5,7 +5,7 @@ import { menuModel } from "../models/menuModel.js";
 import { CustomError } from "../utils/customError.js";
 
 //to just get all the items in the restaurant
-export const getMenuItems = async (req, res) => {
+export const getMenuItems = async (req, res, next) => {
     try {
         const menuItems = await menuModel.find();
         res.status(200).json(menuItems);
@@ -16,7 +16,7 @@ export const getMenuItems = async (req, res) => {
 };
 
 //to get one specific item in the menu
-export const getOneItem = async (req, res) => {
+export const getOneItem = async (req, res, next) => {
     const id = req.params.id;
     try {
         const item = await menuModel.find({ _id: id });
@@ -28,7 +28,7 @@ export const getOneItem = async (req, res) => {
 };
 
 //add an tiem into menu
-export const addMenuItems = async (req, res) => {
+export const addMenuItems = async (req, res, next) => {
     const item = req.body;
     const newItem = new menuModel(item);
     try {
@@ -42,12 +42,12 @@ export const addMenuItems = async (req, res) => {
 };
 
 //update an time on the menu
-export const updateMenuItems = async (req, res) => {
+export const updateMenuItems = async (req, res, next) => {
     const { id: _id } = req.params;
     const updatedData = req.body;
     try {
         if (!mongoose.Types.ObjectId.isValid(_id))
-            return res.status(404).send("no item with that id exists");
+            throw new Error("No item with this id exists");
         const updates = await menuModel.findByIdAndUpdate(_id, updatedData, {
             new: true,
         });
@@ -59,11 +59,11 @@ export const updateMenuItems = async (req, res) => {
 };
 
 //to delete the item in the menu
-export const deleteItems = async (req, res) => {
+export const deleteItems = async (req, res, next) => {
     const { id } = req.params;
     try {
         if (!mongoose.Types.ObjectId.isValid(id))
-            return res.status(404).json({ message: "no item with this id" });
+            throw new Error("No item with this id exists");
         const deleted = await menuModel.deleteOne({ _id: id });
         res.status(200).json(deleted);
     } catch (error) {
@@ -73,7 +73,7 @@ export const deleteItems = async (req, res) => {
 };
 
 //delete all items in the category
-export const deleteByCategory = async (req, res) => {
+export const deleteByCategory = async (req, res, next) => {
     const { id } = req.params;
     try {
         const itemsByCategory = await menuModel.deleteMany({

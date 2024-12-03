@@ -5,7 +5,7 @@ import { tableModel } from "../models/tableModel.js";
 import { CustomError } from "../utils/customError.js";
 
 //get all tables
-export const getTables = async (req, res) => {
+export const getTables = async (req, res, next) => {
     try {
         const tables = await tableModel.find();
         res.status(200).json(tables);
@@ -16,7 +16,7 @@ export const getTables = async (req, res) => {
 };
 
 //get details of table in big view
-export const getOneTable = async (req, res) => {
+export const getOneTable = async (req, res, next) => {
     const { id } = req.params;
     try {
         const table = await tableModel.findById(id);
@@ -28,7 +28,7 @@ export const getOneTable = async (req, res) => {
 };
 
 //add a new table
-export const addTable = async (req, res) => {
+export const addTable = async (req, res, next) => {
     const table = req.body;
     try {
         const newTable = new tableModel(table);
@@ -42,11 +42,11 @@ export const addTable = async (req, res) => {
 };
 
 //remove a table
-export const deleteTable = async (req, res) => {
+export const deleteTable = async (req, res, next) => {
     const { id } = req.params;
     try {
         if (!mongoose.Types.ObjectId.isValid(id))
-            return res.status(404).json({ message: "no item with this id" });
+            throw new Error("No item with this id exists");
         const deleted = await tableModel.findByIdAndDelete(id);
         res.status(200).json(deleted);
     } catch (error) {

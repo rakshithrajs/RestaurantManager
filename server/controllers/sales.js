@@ -3,7 +3,7 @@ import { orderHistoryModel } from "../models/orderHistory.js";
 import { CustomError } from "../utils/customError.js";
 
 //sales outlook
-export const getSales = async (req, res) => {
+export const getSales = async (req, res, next) => {
     try {
         const sales = await orderHistoryModel.aggregate([
             {
@@ -23,7 +23,7 @@ export const getSales = async (req, res) => {
 };
 
 //best dish
-export const getDish = async (req, res) => {
+export const getDish = async (req, res, next) => {
     try {
         const dish = await orderHistoryModel.aggregate([
             {

@@ -6,7 +6,7 @@ import { orderHistoryModel } from "../models/orderHistory.js";
 import { CustomError } from "../utils/customError.js";
 
 // to generate bill
-export const getTableBill = async (req, res) => {
+export const getTableBill = async (req, res, next) => {
     try {
         const { id } = req.params;
         const tableId = new mongoose.Types.ObjectId(id); // to make the string id as object id so that we can match in the aggreagation
@@ -71,7 +71,7 @@ export const getTableBill = async (req, res) => {
 };
 
 //for storing the order history of all tables
-export const postOrderHistory = async (req, res) => {
+export const postOrderHistory = async (req, res, next) => {
     try {
         const order = req.body;
         const orderHistory = await orderHistoryModel.create(order);

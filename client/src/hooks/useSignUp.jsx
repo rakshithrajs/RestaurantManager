@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useAuthContext } from "./useAuthContext.jsx";
 import api from "../api/api.jsx";
 
+import { capitalize } from "../utils/capitalize.jsx";
+
 export const useSignUp = () => {
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(null);
@@ -19,9 +21,12 @@ export const useSignUp = () => {
             dispatch({ type: "LOGIN", payload: response });
             setLoading(false);
         } catch (error) {
-            setError(error.response.data);
-            console.log(error);
+            const errorMessage =
+                capitalize(error.response?.data?.message) ||
+                "An unexpected error occurred.";
+            setError(errorMessage);
             setLoading(false);
+            throw error;
         }
     };
     return { signup, loading, error };

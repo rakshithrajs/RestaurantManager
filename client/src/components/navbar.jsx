@@ -32,12 +32,14 @@ const Navbar = () => {
                     </div>
                 </Link>
                 {/* Hamburger Menu for Small Screens */}
-                <button
-                    onClick={toggleMenu}
-                    className="text-white text-2xl md:hidden focus:outline-none"
-                >
-                    {menuOpen ? <FaTimes /> : <FaBars />}
-                </button>
+                {user && (
+                    <button
+                        onClick={toggleMenu}
+                        className="text-white text-2xl md:hidden focus:outline-none"
+                    >
+                        {menuOpen ? <FaTimes /> : <FaBars />}
+                    </button>
+                )}
             </div>
 
             {/* Navigation Links */}

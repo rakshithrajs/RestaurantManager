@@ -10,7 +10,7 @@ const createToken = (_id) => {
 };
 
 // login logic
-export const login = async (req, res) => {
+export const login = async (req, res, next) => {
     const { email, password } = req.body;
     try {
         const user = await authModel.logIn(email, password);
@@ -23,7 +23,7 @@ export const login = async (req, res) => {
 };
 
 //signup logic
-export const signup = async (req, res) => {
+export const signup = async (req, res, next) => {
     const { email, password } = req.body;
     try {
         const user = await authModel.signUp(email, password);

@@ -19,7 +19,6 @@ const SignUp = () => {
             await signup(email, password);
             setSuccess(true);
         } catch (error) {
-            console.log(error);
             setSuccess(false);
         }
     };

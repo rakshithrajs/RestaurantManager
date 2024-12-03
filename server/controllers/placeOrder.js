@@ -3,7 +3,7 @@ import { orderModel } from "../models/orderModel.js";
 import { CustomError } from "../utils/customError.js";
 
 //to dsiplay the orders in all order screen
-export const getOrders = async (req, res) => {
+export const getOrders = async (req, res, next) => {
     try {
         const groupedOrders = await orderModel.aggregate([
             {
@@ -57,7 +57,7 @@ export const getOrders = async (req, res) => {
 };
 
 //get details on one particular order
-export const getOneOrder = async (req, res) => {
+export const getOneOrder = async (req, res, next) => {
     const { id } = req.params;
     try {
         const order = await orderModel
@@ -72,7 +72,7 @@ export const getOneOrder = async (req, res) => {
 };
 
 //make an order
-export const addOrder = async (req, res) => {
+export const addOrder = async (req, res, next) => {
     try {
         const order = req.body;
         const newOrder = new orderModel(order);
@@ -85,7 +85,7 @@ export const addOrder = async (req, res) => {
 };
 
 //delete an order
-export const deleteOrder = async (req, res) => {
+export const deleteOrder = async (req, res, next) => {
     try {
         const { id } = req.params;
         const order = await orderModel.findByIdAndDelete(id);
@@ -97,7 +97,7 @@ export const deleteOrder = async (req, res) => {
 };
 
 //delete all orders
-export const deleteAll = async (req, res) => {
+export const deleteAll = async (req, res, next) => {
     const { id } = req.params;
     try {
         const deleteOrders = await orderModel.deleteMany({
@@ -111,7 +111,7 @@ export const deleteAll = async (req, res) => {
 };
 
 //update an order
-export const updateOrder = async (req, res) => {
+export const updateOrder = async (req, res, next) => {
     const { id } = req.params;
     const order = req.body;
     try {

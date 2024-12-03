@@ -52,9 +52,6 @@ app.use(express.json());
 app.use(bodyparser.urlencoded({ extended: true }));
 app.use(helmet());
 
-//custom middlewares
-app.use(errorCheck);
-
 //route middlewares
 app.use("/menu", menuRoutes);
 app.use("/category", categoryRoutes);
@@ -64,6 +61,9 @@ app.use("/checkout", checkoutRoutes);
 app.use("/sales", salesRoutes);
 app.use("/auth", authRoutes);
 app.get("/", (req, res) => res.send("Hello World!"));
+
+//custom middlewares
+app.use(errorCheck);
 
 mongoose
     .connect(process.env.MONGO_URI)

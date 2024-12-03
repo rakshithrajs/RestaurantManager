@@ -3,7 +3,7 @@ import { categoryModel } from "../models/itemCategory.js";
 import { CustomError } from "../utils/customError.js";
 
 // getting all the categories available
-export const getCategories = async (req, res) => {
+export const getCategories = async (req, res, next) => {
     try {
         const category = await categoryModel.find();
         res.status(200).json(category);
@@ -14,7 +14,7 @@ export const getCategories = async (req, res) => {
 };
 
 // adding a new category
-export const addCategories = async (req, res) => {
+export const addCategories = async (req, res, next) => {
     try {
         const category = req.body;
         const newCategory = new categoryModel(category);
@@ -27,7 +27,7 @@ export const addCategories = async (req, res) => {
 };
 
 //delete a category
-export const deleteCategories = async (req, res) => {
+export const deleteCategories = async (req, res, next) => {
     try {
         const id = req.params["id"];
         const category = await categoryModel.findByIdAndDelete(id);
