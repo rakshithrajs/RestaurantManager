@@ -14,6 +14,14 @@ const userSchema = new Schema({
         type: String,
         required: true,
     },
+    // name: {
+    //     type: String,
+    // },
+    // role: {
+    //     type: String,
+    //     default: "waiter",
+    //     enum: ["waiter", "cook", "admin"],
+    // },
 });
 
 userSchema.statics.logIn = async function (email, password) {

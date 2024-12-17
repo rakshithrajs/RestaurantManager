@@ -21,6 +21,10 @@ import { logger } from "./utils/logger.js";
 import { CustomError } from "./utils/customError.js";
 import { errorCheck } from "./middleware/errorCheck.js";
 
+//config
+import { corsOptions } from "./config/corsOptions.js";
+import { morganFormat } from "./config/morganOptions.js";
+
 //environmentals variables
 dotenv.config();
 
@@ -29,16 +33,16 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 //logging middleware
-const morganFormat = ":method :url :status :response-time ms";
 app.use(
     morgan(morganFormat, {
         stream: {
             write: (message) => {
                 const logObject = {
-                    method: message.split(" ")[0],
-                    url: message.split(" ")[1],
-                    status: message.split(" ")[2],
-                    responseTime: message.split(" ")[3],
+                    origin: message.split(" ")[0],
+                    method: message.split(" ")[1],
+                    url: message.split(" ")[2],
+                    status: message.split(" ")[3],
+                    responseTime: message.split(" ")[4],
                 };
                 logger.info(JSON.stringify(logObject));
             },
@@ -47,7 +51,7 @@ app.use(
 );
 
 //functional middleware
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(bodyparser.urlencoded({ extended: true }));
 app.use(helmet());

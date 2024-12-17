@@ -1,5 +1,4 @@
 import { createLogger, format, transports } from "winston";
-import DailyRotateFile from "winston-daily-rotate-file";
 
 const { combine, timestamp, colorize, align, printf } = format;
 
@@ -25,22 +24,18 @@ const FileLogger = combine(
 );
 
 // File Rotaters
-const GeneralFileRotater = new DailyRotateFile({
-    filename: `./log/app-%DATE%.log`,
-    datePattern: "YYYY-MM-DD",
-    zippedArchive: true,
-    maxSize: "20m",
-    maxFiles: "14d",
+const GeneralFileRotater = new transports.File({
+    filename: `./log/app.log`,
+    maxsize: 20 * 1024 * 1024,
+    maxFiles: 3,
     level: "info",
     format: FileLogger,
 });
 
-const ErrorFileRotater = new DailyRotateFile({
-    filename: `./log/app-error-%DATE%.log`,
-    datePattern: "YYYY-MM-DD",
-    zippedArchive: true,
-    maxSize: "20m",
-    maxFiles: "14d",
+const ErrorFileRotater = new transports.File({
+    filename: `./log/app-error.log`,
+    maxsize: 20 * 1024 * 1024,
+    maxFiles: 3,
     level: "error",
     format: FileLogger,
 });
