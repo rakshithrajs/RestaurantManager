@@ -24,7 +24,7 @@ const EditItem = ({ isVisible, setIsVisible, id, editItem, category }) => {
         try {
             const response = await axios.put(`/menu/${id}`, formData, {
                 headers: {
-                    Authorization: `Bearer ${user.data.token}`,
+                    Authorization: `Bearer ${user.token}`,
                 },
             });
             console.log(response.data);

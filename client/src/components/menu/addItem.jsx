@@ -27,7 +27,7 @@ const AddItem = ({ isVisible, setIsVisible }) => {
             try {
                 const res = await axios.get("/category", {
                     headers: {
-                        Authorization: `Bearer ${user.data.token}`,
+                        Authorization: `Bearer ${user.token}`,
                     },
                 });
                 setCategory(res.data);
@@ -48,7 +48,7 @@ const AddItem = ({ isVisible, setIsVisible }) => {
         try {
             const response = await axios.post("/menu", formData, {
                 headers: {
-                    Authorization: `Bearer ${user.data.token}`,
+                    Authorization: `Bearer ${user.token}`,
                 },
             });
             console.log(response.data);

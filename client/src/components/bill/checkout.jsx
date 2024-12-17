@@ -30,7 +30,7 @@ const Checkout = () => {
             try {
                 const response = await api.get(`/checkout/${id}`, {
                     headers: {
-                        Authorization: `Bearer ${user.data.token}`,
+                        Authorization: `Bearer ${user.token}`,
                     },
                 });
                 setData(response.data[0]);
@@ -55,13 +55,13 @@ const Checkout = () => {
         try {
             setVisible(true);
             await api.post("/checkout/history", orderData, {
-                headers: { Authorization: `Bearer ${user.data.token}` },
+                headers: { Authorization: `Bearer ${user.token}` },
             });
             await api.delete(`/tables/${id}`, {
-                headers: { Authorization: `Bearer ${user.data.token}` },
+                headers: { Authorization: `Bearer ${user.token}` },
             });
             await api.delete(`/orders/all/${id}`, {
-                headers: { Authorization: `Bearer ${user.data.token}` },
+                headers: { Authorization: `Bearer ${user.token}` },
             });
 
             setTimeout(() => {

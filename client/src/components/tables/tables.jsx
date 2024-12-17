@@ -34,7 +34,7 @@ const Tables = () => {
             try {
                 const response = await api.get("/tables", {
                     headers: {
-                        Authorization: `Bearer ${user.data.token}`,
+                        Authorization: `Bearer ${user.token}`,
                     },
                 });
                 setTables(response.data);

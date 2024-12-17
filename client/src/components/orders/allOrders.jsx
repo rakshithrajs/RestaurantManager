@@ -18,7 +18,7 @@ const AllOrders = () => {
         const fetchOrder = async () => {
             try {
                 const response = await api.get("/orders", {
-                    headers: { Authorization: `Bearer ${user.data.token}` },
+                    headers: { Authorization: `Bearer ${user.token}` },
                 });
                 setOrders(response.data);
             } catch (error) {
@@ -39,7 +39,7 @@ const AllOrders = () => {
                 { status: orderData.status },
                 {
                     headers: {
-                        Authorization: `Bearer ${user.data.token}`,
+                        Authorization: `Bearer ${user.token}`,
                     },
                 }
             );

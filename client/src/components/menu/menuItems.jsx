@@ -48,7 +48,7 @@ const menuItems = ({ table, query }) => {
         const fetchCategories = async () => {
             try {
                 const res = await api.get("/category", {
-                    headers: { Authorization: `Bearer ${user.data.token}` },
+                    headers: { Authorization: `Bearer ${user.token}` },
                 });
                 setCategory(res.data);
             } catch (error) {
@@ -62,7 +62,7 @@ const menuItems = ({ table, query }) => {
             try {
                 setLoading(true);
                 const response = await api.get("/menu", {
-                    headers: { Authorization: `Bearer ${user.data.token}` },
+                    headers: { Authorization: `Bearer ${user.token}` },
                 });
                 setItems(response.data);
                 setLoading(false);
@@ -77,7 +77,7 @@ const menuItems = ({ table, query }) => {
     const handleDelete = async (id) => {
         try {
             await api.delete(`/menu/${id}`, {
-                headers: { Authorization: `Bearer ${user.data.token}` },
+                headers: { Authorization: `Bearer ${user.token}` },
             });
         } catch (error) {
             console.log(error.message);
@@ -87,10 +87,10 @@ const menuItems = ({ table, query }) => {
     const handleDeleteCategory = async (id) => {
         try {
             await api.delete(`/category/${id}`, {
-                headers: { Authorization: `Bearer ${user.data.token}` },
+                headers: { Authorization: `Bearer ${user.token}` },
             });
             await api.delete(`/menu/all/${id}`, {
-                headers: { Authorization: `Bearer ${user.data.token}` },
+                headers: { Authorization: `Bearer ${user.token}` },
             });
             setRender(render + 1);
         } catch (error) {
@@ -110,7 +110,7 @@ const menuItems = ({ table, query }) => {
         const addOrders = async () => {
             try {
                 const response = await api.post("/orders", order, {
-                    headers: { Authorization: `Bearer ${user.data.token}` },
+                    headers: { Authorization: `Bearer ${user.token}` },
                 });
                 console.log(order);
                 console.log(response.data);
@@ -259,8 +259,8 @@ const menuItems = ({ table, query }) => {
             table.veg_or_nonveg === "both"
                 ? search
                 : search.filter(
-                        (item) => item.veg_or_nonveg === table.veg_or_nonveg
-                    );
+                      (item) => item.veg_or_nonveg === table.veg_or_nonveg
+                  );
         return renderTable(filtered, true);
     }
 };

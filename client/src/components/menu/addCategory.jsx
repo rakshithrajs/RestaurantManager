@@ -34,7 +34,7 @@ const AddCategory = ({ isOpen, setIsOpen }) => {
         try {
             const response = await api.post("/category", category, {
                 headers: {
-                    Authorization: `Bearer ${user.data.token}`,
+                    Authorization: `Bearer ${user.token}`,
                 },
             });
             setSuccess(true);

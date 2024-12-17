@@ -115,7 +115,7 @@ const Navbar = () => {
                 {user ? (
                     <>
                         <span className="hidden md:block text-sm font-medium">
-                            {user.data.email}
+                            {user.email}
                         </span>
                         {!menuOpen && (
                             <button

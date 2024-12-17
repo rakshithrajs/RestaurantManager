@@ -19,7 +19,7 @@ const TableDetailsModal = ({ isOpen, setIsOpen, table }) => {
             try {
                 const response = await api.get("/orders", {
                     headers: {
-                        Authorization: `Bearer ${user.data.token}`,
+                        Authorization: `Bearer ${user.token}`,
                     },
                 });
                 setOrders(

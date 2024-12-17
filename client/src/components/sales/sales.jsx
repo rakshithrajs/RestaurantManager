@@ -22,10 +22,10 @@ const Sales = () => {
             try {
                 const [salesRes, dishRes] = await Promise.all([
                     api.get("/sales", {
-                        headers: { Authorization: `Bearer ${user.data.token}` },
+                        headers: { Authorization: `Bearer ${user.token}` },
                     }),
                     api.get("/sales/dish", {
-                        headers: { Authorization: `Bearer ${user.data.token}` },
+                        headers: { Authorization: `Bearer ${user.token}` },
                     }),
                 ]);
                 setSales(salesRes.data);

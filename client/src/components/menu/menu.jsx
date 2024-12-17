@@ -25,7 +25,7 @@ const Menu = ({ id }) => {
                 try {
                     const response = await api.get(`/tables/${id}`, {
                         headers: {
-                            Authorization: `Bearer ${user.data.token}`,
+                            Authorization: `Bearer ${user.token}`,
                         },
                     });
                     setTable(response.data);

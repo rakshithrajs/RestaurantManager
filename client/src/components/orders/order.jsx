@@ -20,7 +20,7 @@ const Order = ({ id }) => {
         const fetchOrder = async () => {
             try {
                 const response = await api.get("/orders", {
-                    headers: { Authorization: `Bearer ${user.data.token}` },
+                    headers: { Authorization: `Bearer ${user.token}` },
                 });
                 setOrder(response.data);
             } catch (error) {
@@ -34,7 +34,7 @@ const Order = ({ id }) => {
     const deleteOrder = async (orderId) => {
         try {
             await api.delete(`/orders/${orderId}`, {
-                headers: { Authorization: `Bearer ${user.data.token}` },
+                headers: { Authorization: `Bearer ${user.token}` },
             });
             setRender(render + 1);
         } catch (error) {

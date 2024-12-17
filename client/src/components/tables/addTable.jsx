@@ -19,7 +19,7 @@ const AddTableModal = ({ isOpen, setIsOpen }) => {
         try {
             await api.post("/tables", formData, {
                 headers: {
-                    Authorization: `Bearer ${user.data.token}`,
+                    Authorization: `Bearer ${user.token}`,
                 },
             });
             setIsOpen(false);
