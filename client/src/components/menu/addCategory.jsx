@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 
+import { motion } from "framer-motion";
+
 import api from "../../api/api.jsx";
 
 import { IoMdCloseCircle } from "react-icons/io";
 
-import { renderState } from "../../contexts/menuContext.jsx";
+import { renderState } from "../../contexts/renderContext.jsx";
 
 import { useAuthContext } from "../../hooks/useAuthContext.jsx";
 import { useContext } from "react";
@@ -28,7 +30,6 @@ const AddCategory = ({ isOpen, setIsOpen }) => {
         e.preventDefault();
         if (!category.name) {
             setError("Category name is required.");
-            return;
         }
         setError(null);
         try {
@@ -37,9 +38,13 @@ const AddCategory = ({ isOpen, setIsOpen }) => {
                     Authorization: `Bearer ${user.token}`,
                 },
             });
+            //setSuccess(true) for 2seconds and then make it false
             setSuccess(true);
+            setTimeout(() => {
+                setRender(render + 1);
+                setSuccess(false);
+            }, 500);
             setCategory({ name: "" });
-            setRender(render + 1);
             console.log(response);
         } catch (error) {
             setError("Something went wrong. Please try again.");
@@ -66,10 +71,18 @@ const AddCategory = ({ isOpen, setIsOpen }) => {
                 {error && (
                     <div className="text-red-500 text-sm mb-4">{error}</div>
                 )}
+                {/* make div appear in a smooth transition */}
                 {success && (
-                    <div className="text-green-500 text-sm mb-4">
+                    <motion.div
+                        layout
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="text-green-500 text-sm mb-4"
+                    >
                         Category added successfully!
-                    </div>
+                    </motion.div>
                 )}
                 <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                     <input

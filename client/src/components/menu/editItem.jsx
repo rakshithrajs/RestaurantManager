@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import axios from "../../api/api.jsx";
-import { renderState } from "../../contexts/menuContext.jsx";
+import { renderState } from "../../contexts/renderContext.jsx";
 import { useAuthContext } from "../../hooks/useAuthContext.jsx";
 
 const EditItem = ({ isVisible, setIsVisible, id, editItem, category }) => {

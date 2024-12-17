@@ -3,7 +3,7 @@ import moment from "moment";
 
 import { capitalize } from "../../utils/capitalize.jsx";
 
-import { renderState } from "../../contexts/menuContext.jsx";
+import { renderState } from "../../contexts/renderContext.jsx";
 import { useAuthContext } from "../../hooks/useAuthContext.jsx";
 
 import AddTable from "./addTable.jsx";

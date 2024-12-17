@@ -13,7 +13,7 @@ import { LuCarrot } from "react-icons/lu";
 import { GiChickenOven } from "react-icons/gi";
 import { RiDeleteBin6Line } from "react-icons/ri";
 
-import { renderState } from "../../contexts/menuContext.jsx";
+import { renderState } from "../../contexts/renderContext.jsx";
 import { useAuthContext } from "../../hooks/useAuthContext.jsx";
 
 const menuItems = ({ table, query }) => {
@@ -56,7 +56,7 @@ const menuItems = ({ table, query }) => {
             }
         };
         fetchCategories();
-    }, []);
+    }, [render]);
     useEffect(() => {
         const getItems = async () => {
             try {
@@ -142,7 +142,9 @@ const menuItems = ({ table, query }) => {
                                     <div className="flex items-center justify-center gap-2">
                                         {cat.name}
                                         <RiDeleteBin6Line
-                                            onClick={handleDeleteCategory}
+                                            onClick={() =>
+                                                handleDeleteCategory(cat._id)
+                                            }
                                         />
                                     </div>
                                 </th>

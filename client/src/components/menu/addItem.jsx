@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from "react";
 
 import axios from "../../api/api.jsx";
 
-import { renderState } from "../../contexts/menuContext.jsx";
+import { renderState } from "../../contexts/renderContext.jsx";
 
 import { useAuthContext } from "../../hooks/useAuthContext.jsx";
 
@@ -36,7 +36,7 @@ const AddItem = ({ isVisible, setIsVisible }) => {
             }
         };
         fetchCategories();
-    }, []);
+    }, [render]);
 
     //for submitting
     const handleSubmit = async (event) => {

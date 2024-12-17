@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import api from "../../api/api.jsx";
-import { renderState } from "../../contexts/menuContext.jsx";
+import { renderState } from "../../contexts/renderContext.jsx";
 import { useAuthContext } from "../../hooks/useAuthContext.jsx";
 
 const AddTableModal = ({ isOpen, setIsOpen }) => {

@@ -2,16 +2,16 @@ import React, { useEffect, useState, useContext } from "react";
 
 import api from "../../api/api.jsx";
 
-import { renderState } from "../../contexts/menuContext.jsx";
+import { renderState } from "../../contexts/renderContext.jsx";
 import { useAuthContext } from "../../hooks/useAuthContext.jsx";
 
 const AllOrders = () => {
     //for auth token
     const { user } = useAuthContext();
-    
+
     //for rendering
     const [render, setRender] = useContext(renderState);
-    
+
     //for getting orders
     const [orders, setOrders] = useState([]);
     useEffect(() => {

@@ -6,7 +6,7 @@ import api from "../../api/api.jsx";
 import rupee from "../../utils/currencyFormatter.jsx";
 import { capitalize } from "../../utils/capitalize.jsx";
 
-import { renderState } from "../../contexts/menuContext.jsx";
+import { renderState } from "../../contexts/renderContext.jsx";
 import { useAuthContext } from "../../hooks/useAuthContext.jsx";
 
 const TableDetailsModal = ({ isOpen, setIsOpen, table }) => {

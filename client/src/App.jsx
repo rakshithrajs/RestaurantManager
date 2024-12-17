@@ -10,7 +10,7 @@ import Sales from "./components/sales/sales.jsx";
 import Login from "./components/auth/login.jsx";
 import Signup from "./components/auth/signup.jsx";
 
-import { renderState } from "./contexts/menuContext.jsx";
+import { renderState } from "./contexts/renderContext.jsx";
 import { useAuthContext } from "./hooks/useAuthContext.jsx";
 
 import { Route, Routes, Navigate } from "react-router";
