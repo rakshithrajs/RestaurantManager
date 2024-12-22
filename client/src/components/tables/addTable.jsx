@@ -1,11 +1,13 @@
-import React, { useContext, useState } from "react";
+import { useState } from "react";
 import api from "../../api/api.jsx";
-import { renderState } from "../../contexts/renderContext.jsx";
 import { useAuthContext } from "../../hooks/useAuthContext.jsx";
+import { actions, useStore } from "../../contexts/storeContext.jsx";
 
 const AddTableModal = ({ isOpen, setIsOpen }) => {
     const { user } = useAuthContext();
-    const [render, setRender] = useContext(renderState);
+
+    const { dispatch } = useStore();
+
     const [formData, setFormData] = useState({
         tableNo: 0,
         customerName: "",
@@ -17,13 +19,13 @@ const AddTableModal = ({ isOpen, setIsOpen }) => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
-            await api.post("/tables", formData, {
+            const response = await api.post("/tables", formData, {
                 headers: {
                     Authorization: `Bearer ${user.token}`,
                 },
             });
+            dispatch({ type: actions.ADD_TABLE, payload: response.data });
             setIsOpen(false);
-            setRender(render + 1);
             setFormData({
                 tableNo: 0,
                 customerName: "",
@@ -56,6 +58,7 @@ const AddTableModal = ({ isOpen, setIsOpen }) => {
                         <input
                             type="number"
                             id="tableNo"
+                            autoFocus
                             className="mt-2 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 p-3 bg-gray-50"
                             placeholder="Enter table number"
                             value={formData.tableNo}

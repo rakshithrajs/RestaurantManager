@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import rupee from "../../utils/currencyFormatter.jsx";
 import { capitalize } from "../../utils/capitalize.jsx";
@@ -13,15 +13,15 @@ import { LuCarrot } from "react-icons/lu";
 import { GiChickenOven } from "react-icons/gi";
 import { RiDeleteBin6Line } from "react-icons/ri";
 
-import { renderState } from "../../contexts/renderContext.jsx";
 import { useAuthContext } from "../../hooks/useAuthContext.jsx";
+import { useStore, actions } from "../../contexts/storeContext.jsx";
 
 const menuItems = ({ table, query }) => {
     //for requesting with token
     const { user } = useAuthContext();
 
-    //for rendering
-    const [render, setRender] = useContext(renderState);
+    // state manager
+    const { state, dispatch } = useStore();
 
     //edit form related
     const [editForm, setEditForm] = useState(false);
@@ -34,7 +34,7 @@ const menuItems = ({ table, query }) => {
     });
     const [ItemId, setItemId] = useState(0);
     const tobeEdited = (id) => {
-        items.find((i) => {
+        state.items.find((i) => {
             if (i._id == id) {
                 setEdited(i);
             }
@@ -42,29 +42,29 @@ const menuItems = ({ table, query }) => {
     };
 
     //menu related
-    const [category, setCategory] = useState([]);
-    const [items, setItems] = useState([]);
     useEffect(() => {
         const fetchCategories = async () => {
             try {
                 const res = await api.get("/category", {
                     headers: { Authorization: `Bearer ${user.token}` },
                 });
-                setCategory(res.data);
+                dispatch({ type: actions.FETCH_CATEGORY, payload: res.data });
             } catch (error) {
                 console.log(error.message);
             }
         };
-        fetchCategories();
-    }, [render]);
-    useEffect(() => {
         const getItems = async () => {
             try {
                 setLoading(true);
                 const response = await api.get("/menu", {
-                    headers: { Authorization: `Bearer ${user.token}` },
+                    headers: {
+                        Authorization: `Bearer ${user.token}`,
+                    },
                 });
-                setItems(response.data);
+                dispatch({
+                    type: actions.FETCH_ITEMS,
+                    payload: response.data,
+                });
                 setLoading(false);
             } catch (error) {
                 console.log(error.message);
@@ -72,18 +72,21 @@ const menuItems = ({ table, query }) => {
         };
         if (user) {
             getItems();
+            fetchCategories();
         }
-    }, [render, category]);
+    }, [user, dispatch]);
+
     const handleDelete = async (id) => {
         try {
             await api.delete(`/menu/${id}`, {
                 headers: { Authorization: `Bearer ${user.token}` },
             });
+            dispatch({ type: actions.DELETE_ITEM, payload: id });
         } catch (error) {
             console.log(error.message);
         }
-        setRender(render + 1);
     };
+
     const handleDeleteCategory = async (id) => {
         try {
             await api.delete(`/category/${id}`, {
@@ -92,32 +95,32 @@ const menuItems = ({ table, query }) => {
             await api.delete(`/menu/all/${id}`, {
                 headers: { Authorization: `Bearer ${user.token}` },
             });
-            setRender(render + 1);
+            dispatch({ type: actions.DELETE_CATEGORY, payload: id });
         } catch (error) {
             console.log(error.message);
         }
     };
+
     let search = query
-        ? items.filter((o) => o.item.toLowerCase().indexOf(query) > -1)
-        : items;
+        ? state.items.filter((o) => o.item.toLowerCase().indexOf(query) > -1)
+        : state.items;
 
     //order related
     const [order, setOrder] = useState({
         itemId: "",
         tableId: "",
     });
+
     useEffect(() => {
         const addOrders = async () => {
             try {
                 const response = await api.post("/orders", order, {
                     headers: { Authorization: `Bearer ${user.token}` },
                 });
-                console.log(order);
-                console.log(response.data);
+                dispatch({ type: actions.ADD_ORDER, payload: response.data });
             } catch (error) {
                 console.log(error.message);
             }
-            setRender(render + 1);
         };
         if (order.itemId !== "") addOrders();
     }, [order]);
@@ -131,7 +134,7 @@ const menuItems = ({ table, query }) => {
     const renderTable = (filteredItems, isOrderTable = false) => {
         return (
             <table className="w-full table-auto border-collapse overflow-x-auto text-sm sm:text-base">
-                {category.map((cat, index) => (
+                {state.categories.map((cat, index) => (
                     <React.Fragment key={index}>
                         <thead>
                             <tr>
@@ -142,6 +145,7 @@ const menuItems = ({ table, query }) => {
                                     <div className="flex items-center justify-center gap-2">
                                         {cat.name}
                                         <RiDeleteBin6Line
+                                            className="cursor-pointer"
                                             onClick={() =>
                                                 handleDeleteCategory(cat._id)
                                             }
@@ -251,7 +255,7 @@ const menuItems = ({ table, query }) => {
                     setIsVisible={setEditForm}
                     id={ItemId}
                     editItem={edited}
-                    category={category}
+                    category={state.categories}
                 />
                 {renderTable(search)}
             </>

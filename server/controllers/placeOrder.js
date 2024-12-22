@@ -2,54 +2,57 @@ import { orderModel } from "../models/orderModel.js";
 
 import { CustomError } from "../utils/customError.js";
 
+const getGroupedOrders = async () => {
+    const groupedOrders = await orderModel.aggregate([
+        {
+            $lookup: {
+                from: "menumodels",
+                localField: "itemId",
+                foreignField: "_id",
+                as: "itemDetails",
+            },
+        },
+        {
+            $lookup: {
+                from: "tablemodels",
+                localField: "tableId",
+                foreignField: "_id",
+                as: "tableDetails",
+            },
+        },
+        {
+            $unwind: "$itemDetails",
+            $unwind: "$tableDetails",
+        },
+        {
+            $group: {
+                _id: {
+                    itemId: "$itemId",
+                    tableId: "$tableId",
+                },
+                orderIds: { $push: "$_id" },
+                count: { $sum: 1 },
+                tableNo: { $first: "$tableDetails.tableNo" },
+                itemName: { $first: "$itemDetails.item" },
+                status: { $first: "$status" },
+                createdAt: { $first: "$createdAt" },
+                price: { $first: "$itemDetails.price" },
+            },
+        },
+        {
+            $sort: {
+                itemName: 1,
+                createdAt: 1,
+            },
+        },
+    ]);
+    return groupedOrders;
+};
+
 //to dsiplay the orders in all order screen
 export const getOrders = async (req, res, next) => {
     try {
-        const groupedOrders = await orderModel.aggregate([
-            {
-                //joining tables
-                $lookup: {
-                    from: "menumodels",
-                    localField: "itemId",
-                    foreignField: "_id",
-                    as: "itemDetails",
-                },
-            },
-            {
-                $lookup: {
-                    from: "tablemodels",
-                    localField: "tableId",
-                    foreignField: "_id",
-                    as: "tableDetails",
-                },
-            },
-            {
-                $unwind: "$itemDetails",
-                $unwind: "$tableDetails",
-            },
-            {
-                $group: {
-                    _id: {
-                        itemId: "$itemId",
-                        tableId: "$tableId",
-                    },
-                    orderId: { $first: "$_id" },
-                    count: { $sum: 1 },
-                    tableNo: { $first: "$tableDetails.tableNo" },
-                    itemName: { $first: "$itemDetails.item" },
-                    status: { $first: "$status" },
-                    createdAt: { $first: "$createdAt" },
-                    price: { $first: "$itemDetails.price" },
-                },
-            },
-            {
-                $sort: {
-                    itemName: 1,
-                    createdAt: 1,
-                },
-            },
-        ]);
-        res.status(200).json(groupedOrders);
+        res.status(200).json(await getGroupedOrders());
     } catch (error) {
         const err = new CustomError(error.message, error.statusCode);
         next(err);
@@ -77,7 +80,7 @@ export const addOrder = async (req, res, next) => {
         const order = req.body;
         const newOrder = new orderModel(order);
         await newOrder.save();
-        res.status(201).json(newOrder);
+        res.status(201).json(await getGroupedOrders());
     } catch (error) {
         const err = new CustomError(error.message, error.statusCode);
         next(err);
@@ -113,11 +116,19 @@ export const deleteAll = async (req, res, next) => {
 //update an order
 export const updateOrder = async (req, res, next) => {
     const { id } = req.params;
-    const order = req.body;
+    const { status } = req.body;
+    const tableId = JSON.parse(id).tableId;
+    const itemId = JSON.parse(id).itemId;
     try {
-        const updatedOrder = await orderModel.findByIdAndUpdate(id, order, {
-            new: true,
-        });
+        // id contains tableId and itemId in string JSON format match the tableId and itemId and update the status
+        const updatedOrder = await orderModel.findOneAndUpdate(
+            { tableId, itemId },
+            { status },
+            { new: true }
+        );
+        if (!updatedOrder) {
+            return res.status(404).json({ message: "Order not found" });
+        }
         res.status(200).json(updatedOrder);
     } catch (error) {
         const err = new CustomError(error.message, error.statusCode);

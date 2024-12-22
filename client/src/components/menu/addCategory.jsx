@@ -6,17 +6,16 @@ import api from "../../api/api.jsx";
 
 import { IoMdCloseCircle } from "react-icons/io";
 
-import { renderState } from "../../contexts/renderContext.jsx";
-
 import { useAuthContext } from "../../hooks/useAuthContext.jsx";
-import { useContext } from "react";
+
+import { actions, useStore } from "../../contexts/storeContext.jsx";
 
 const AddCategory = ({ isOpen, setIsOpen }) => {
     //for auth token
     const { user } = useAuthContext();
 
-    //for rendering
-    const [render, setRender] = useContext(renderState);
+    //state manager
+    const { dispatch } = useStore();
 
     //fpr category input
     const [category, setCategory] = useState({ name: "" });
@@ -38,14 +37,12 @@ const AddCategory = ({ isOpen, setIsOpen }) => {
                     Authorization: `Bearer ${user.token}`,
                 },
             });
-            //setSuccess(true) for 2seconds and then make it false
+            dispatch({ type: actions.ADD_CATEGORY, payload: response.data });
+            setCategory({ name: "" });
             setSuccess(true);
             setTimeout(() => {
-                setRender(render + 1);
                 setSuccess(false);
             }, 500);
-            setCategory({ name: "" });
-            console.log(response);
         } catch (error) {
             setError("Something went wrong. Please try again.");
             console.log(error);
@@ -88,6 +85,7 @@ const AddCategory = ({ isOpen, setIsOpen }) => {
                     <input
                         type="text"
                         placeholder="Category Name"
+                        autoFocus
                         id="categoryname"
                         name="categoryname"
                         value={category.name}

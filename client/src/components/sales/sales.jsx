@@ -1,20 +1,13 @@
-import React, { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { motion } from "framer-motion";
 import api from "../../api/api.jsx";
-import moment from "moment";
 import rupee from "../../utils/currencyFormatter.jsx";
 import { useAuthContext } from "../../hooks/useAuthContext.jsx";
+import { useStore, actions } from "../../contexts/storeContext.jsx"; // Import useStore and actions
 
 const Sales = () => {
     const { user } = useAuthContext();
-    const [sales, setSales] = useState([]);
-    const [yearfiltered, setYearsales] = useState([]);
-    const [monthfiltered, setMonthsales] = useState([]);
-    const [dayfilteredsales, setdaysales] = useState([]);
-    const [yeardish, setYeardish] = useState([]);
-    const [monthdish, setMonthdish] = useState([]);
-    const [daydish, setdaydish] = useState([]);
-    const [dish, setDish] = useState([]);
+    const { state, dispatch } = useStore();
 
     // Fetch sales and dish data
     useEffect(() => {
@@ -28,33 +21,17 @@ const Sales = () => {
                         headers: { Authorization: `Bearer ${user.token}` },
                     }),
                 ]);
-                setSales(salesRes.data);
-                setDish(dishRes.data);
+
+                // Dispatch actions to update store
+                dispatch({ type: actions.FETCH_SALES, payload: salesRes.data });
+                dispatch({ type: actions.FETCH_DISH, payload: dishRes.data });
             } catch (error) {
                 console.error("Error fetching data:", error.message);
             }
         };
 
         if (user) fetchData();
-    }, [user]);
-
-    // Filter sales and dishes
-    useEffect(() => {
-        const filterByTime = (data, format) =>
-            data.filter(
-                (item) =>
-                    moment(item.createdAt || 0).format(format) ===
-                    moment().format(format)
-            );
-
-        setdaysales(filterByTime(sales, "DD/MM/YY"));
-        setMonthsales(filterByTime(sales, "MM/YY"));
-        setYearsales(filterByTime(sales, "YY"));
-
-        setdaydish(filterByTime(dish, "DD/MM/YY"));
-        setMonthdish(filterByTime(dish, "MM/YY"));
-        setYeardish(filterByTime(dish, "YY"));
-    }, [sales, dish]);
+    }, [user, dispatch]);
 
     // Animation Variants
     const cardVariant = {
@@ -83,7 +60,7 @@ const Sales = () => {
                         ? rupee.format(
                               value.reduce((acc, item) => acc + item.total, 0)
                           )
-                        : value[0].itemName
+                        : value[0].itemName || "No Data"
                     : "No Data"}
             </p>
         </motion.div>
@@ -122,19 +99,19 @@ const Sales = () => {
                         <div className="grid gap-8 sm:grid-cols-1 md:grid-cols-3">
                             <StatCard
                                 title="Today's Sales"
-                                value={dayfilteredsales}
+                                value={state.daySales || []}
                                 isCurrency={true}
                                 delay={0.1}
                             />
                             <StatCard
                                 title="Monthly Sales"
-                                value={monthfiltered}
+                                value={state.monthSales || []}
                                 isCurrency={true}
                                 delay={0.2}
                             />
                             <StatCard
                                 title="Yearly Sales"
-                                value={yearfiltered}
+                                value={state.yearSales || []}
                                 isCurrency={true}
                                 delay={0.3}
                             />
@@ -149,17 +126,17 @@ const Sales = () => {
                         <div className="grid gap-8 sm:grid-cols-1 md:grid-cols-3">
                             <StatCard
                                 title="Today"
-                                value={daydish}
+                                value={state.dayDish || []}
                                 delay={0.4}
                             />
                             <StatCard
                                 title="This Month"
-                                value={monthdish}
+                                value={state.monthDish || []}
                                 delay={0.5}
                             />
                             <StatCard
                                 title="This Year"
-                                value={yeardish}
+                                value={state.yearDish || []}
                                 delay={0.6}
                             />
                         </div>

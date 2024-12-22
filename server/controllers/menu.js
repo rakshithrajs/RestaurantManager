@@ -34,7 +34,6 @@ export const addMenuItems = async (req, res, next) => {
     try {
         await newItem.save();
         res.status(201).json(newItem);
-        console.log(newItem);
     } catch (error) {
         const err = new CustomError(error.message, error.statusCode);
         next(err);

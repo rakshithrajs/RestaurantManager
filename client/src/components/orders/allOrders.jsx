@@ -1,50 +1,50 @@
-import React, { useEffect, useState, useContext } from "react";
-
+import { useEffect } from "react";
 import api from "../../api/api.jsx";
-
-import { renderState } from "../../contexts/renderContext.jsx";
 import { useAuthContext } from "../../hooks/useAuthContext.jsx";
+import { actions, useStore } from "../../contexts/storeContext.jsx";
 
 const AllOrders = () => {
-    //for auth token
+    // For auth token
     const { user } = useAuthContext();
 
-    //for rendering
-    const [render, setRender] = useContext(renderState);
+    // Access store and dispatch
+    const { state, dispatch } = useStore();
 
-    //for getting orders
-    const [orders, setOrders] = useState([]);
+    // Fetch orders from API
     useEffect(() => {
-        const fetchOrder = async () => {
+        const fetchOrders = async () => {
             try {
                 const response = await api.get("/orders", {
                     headers: { Authorization: `Bearer ${user.token}` },
                 });
-                setOrders(response.data);
+                dispatch({ type: actions.FETCH_ORDER, payload: response.data });
             } catch (error) {
                 console.error("Error fetching orders:", error.message);
             }
         };
         if (user) {
-            fetchOrder();
+            fetchOrders();
         }
-    }, [render, user]);
-    const handleChange = async (id, orderData) => {
-        const updated = orders.map((o) =>
-            o.orderId === id ? { ...o, status: orderData.status } : o
-        );
+    }, [user, dispatch]);
+
+    // Handle status change
+    const handleChange = async (tableId_ItemId, newStatus) => {
         try {
-            await api.put(
-                `/orders/${id}`,
-                { status: orderData.status },
+            const response = await api.put(
+                `/orders/${tableId_ItemId}`,
+                { status: newStatus },
                 {
-                    headers: {
-                        Authorization: `Bearer ${user.token}`,
-                    },
+                    headers: { Authorization: `Bearer ${user.token}` },
                 }
             );
-            setOrders(updated);
-            setRender(render + 1);
+            if (response.status === 200) {
+                dispatch({
+                    type: actions.CHANGE_ORDER_STATUS,
+                    payload: { tableId_ItemId, status: newStatus },
+                });
+            } else {
+                console.error("Failed to update status:", response.data);
+            }
         } catch (error) {
             console.error("Error updating status:", error.message);
         }
@@ -59,10 +59,10 @@ const AllOrders = () => {
 
     return (
         <div className="container mx-auto p-4 sm:p-6 grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-            {orders.length > 0 ? (
-                orders.map((order, index) => (
+            {state.orders.length > 0 ? (
+                state.orders.map((order, index) => (
                     <div
-                        key={order.orderId}
+                        key={index}
                         className="bg-white rounded-xl shadow-md p-5 hover:shadow-lg transform transition duration-300 hover:scale-105"
                     >
                         {/* Order Header */}
@@ -97,21 +97,20 @@ const AllOrders = () => {
                         {/* Status Selector */}
                         <div className="mt-6 flex items-center justify-between">
                             <label
-                                htmlFor={`status-${order.orderId}`}
+                                htmlFor={`status-${order.orderIds[0]}`}
                                 className="text-sm font-medium text-gray-600"
                             >
                                 Status:
                             </label>
                             <select
-                                id={`status-${order.orderId}`}
+                                id={`status-${order.orderIds[0]}`}
                                 value={order.status}
-                                onChange={(e) => {
-                                    const updatedOrder = {
-                                        ...order,
-                                        status: e.target.value,
-                                    };
-                                    handleChange(order.orderId, updatedOrder);
-                                }}
+                                onChange={(e) =>
+                                    handleChange(
+                                        JSON.stringify(order._id),
+                                        e.target.value
+                                    )
+                                }
                                 className={`flex items-center justify-center text-xs font-medium rounded-lg p-2 transition border border-gray-300 focus:ring-2 focus:ring-blue-300 ${
                                     statusStyles[order.status]
                                 }`}

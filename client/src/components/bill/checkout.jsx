@@ -7,6 +7,8 @@ import api from "../../api/api.jsx";
 import { capitalize } from "../../utils/capitalize.jsx";
 import rupee from "../../utils/currencyFormatter.jsx";
 
+import { actions, useStore } from "../../contexts/storeContext.jsx";
+
 import PaymentDone from "./paymentDone.jsx";
 
 import { useAuthContext } from "../../hooks/useAuthContext.jsx";
@@ -14,15 +16,14 @@ import { useAuthContext } from "../../hooks/useAuthContext.jsx";
 const Checkout = () => {
     //for auth token
     const { user } = useAuthContext();
-    
     //for navigation
     const navigate = useNavigate();
-    
+    // for global state management
+    const { dispatch } = useStore();
     //for bill generation
     const [data, setData] = useState();
     const [orderData, setOrderData] = useState();
     const { id } = useParams();
-    
     const [visible, setVisible] = useState(false);
 
     useEffect(() => {
@@ -63,7 +64,7 @@ const Checkout = () => {
             await api.delete(`/orders/all/${id}`, {
                 headers: { Authorization: `Bearer ${user.token}` },
             });
-
+            dispatch({ type: actions.CHECKOUT, payload: id });
             setTimeout(() => {
                 navigate("/tables");
             }, 1000);

@@ -34,7 +34,6 @@ export const addTable = async (req, res, next) => {
         const newTable = new tableModel(table);
         await newTable.save();
         res.status(201).json(newTable);
-        console.log(newTable);
     } catch (error) {
         const err = new CustomError(error.message, error.statusCode);
         next(err);

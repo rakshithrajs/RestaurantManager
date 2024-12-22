@@ -1,17 +1,16 @@
-import React, { useContext, useState, useEffect } from "react";
+import { useState } from "react";
 
 import axios from "../../api/api.jsx";
 
-import { renderState } from "../../contexts/renderContext.jsx";
-
 import { useAuthContext } from "../../hooks/useAuthContext.jsx";
+import { actions, useStore } from "../../contexts/storeContext.jsx";
 
 const AddItem = ({ isVisible, setIsVisible }) => {
     //for auth token
     const { user } = useAuthContext();
 
-    //for rendering
-    const [render, setRender] = useContext(renderState);
+    //state manager
+    const { state, dispatch } = useStore();
 
     //form data
     const [formData, setFormData] = useState({
@@ -21,22 +20,8 @@ const AddItem = ({ isVisible, setIsVisible }) => {
         description: "",
         category: "",
     });
-    const [category, setCategory] = useState([]);
-    useEffect(() => {
-        const fetchCategories = async () => {
-            try {
-                const res = await axios.get("/category", {
-                    headers: {
-                        Authorization: `Bearer ${user.token}`,
-                    },
-                });
-                setCategory(res.data);
-            } catch (error) {
-                console.log(error.message);
-            }
-        };
-        fetchCategories();
-    }, [render]);
+
+    const category = state.categories || [];
 
     //for submitting
     const handleSubmit = async (event) => {
@@ -51,12 +36,11 @@ const AddItem = ({ isVisible, setIsVisible }) => {
                     Authorization: `Bearer ${user.token}`,
                 },
             });
-            console.log(response.data);
+            dispatch({ type: actions.ADD_ITEM, payload: response.data });
         } catch (error) {
             console.error(error.message);
         }
         setIsVisible(false);
-        setRender(render + 1);
         setFormData({
             item: "",
             price: 0.0,
@@ -89,6 +73,7 @@ const AddItem = ({ isVisible, setIsVisible }) => {
                             name="item"
                             className="mt-2 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 p-3 bg-gray-50"
                             placeholder="Enter item name"
+                            autoFocus
                             value={formData.item}
                             onChange={(e) =>
                                 setFormData({

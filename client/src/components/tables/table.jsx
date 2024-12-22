@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
 import api from "../../api/api.jsx";
@@ -6,12 +6,14 @@ import api from "../../api/api.jsx";
 import rupee from "../../utils/currencyFormatter.jsx";
 import { capitalize } from "../../utils/capitalize.jsx";
 
-import { renderState } from "../../contexts/renderContext.jsx";
 import { useAuthContext } from "../../hooks/useAuthContext.jsx";
+import { useStore } from "../../contexts/storeContext.jsx";
 
 const TableDetailsModal = ({ isOpen, setIsOpen, table }) => {
     const { user } = useAuthContext(); // Auth token
-    const [render, setRender] = useContext(renderState); // For re-rendering
+
+    const { dispatch } = useStore();
+
     const [orders, setOrders] = useState([]); // Orders for the table
 
     useEffect(() => {
@@ -35,9 +37,22 @@ const TableDetailsModal = ({ isOpen, setIsOpen, table }) => {
         }
     }, [isOpen, table, user]);
 
+    const deleteTable = async () => {
+        try {
+            const response = await api.delete(`/tables/${table._id}`, {
+                headers: {
+                    Authorization: `Bearer ${user.token}`,
+                },
+            });
+            dispatch({ type: "DELETE_TABLE", payload: table._id });
+            setIsOpen(false);
+        } catch (error) {
+            console.error("Error deleting table:", error.message);
+        }
+    };
+
     const handleCheckout = () => {
         setIsOpen(false);
-        setRender((prev) => prev + 1); // Trigger re-render
     };
 
     if (!isOpen) return null;
@@ -76,8 +91,8 @@ const TableDetailsModal = ({ isOpen, setIsOpen, table }) => {
                         </thead>
                         <tbody>
                             {orders.length ? (
-                                orders.map((item) => (
-                                    <tr key={item.orderId} className="border-b">
+                                orders.map((item, index) => (
+                                    <tr key={index} className="border-b">
                                         <td className="px-2 md:px-4 py-2">
                                             {item.itemName}
                                         </td>
@@ -108,6 +123,13 @@ const TableDetailsModal = ({ isOpen, setIsOpen, table }) => {
 
                 {/* Buttons */}
                 <div className="flex flex-col gap-3 md:gap-0 md:flex-row md:justify-end md:items-center md:space-x-4">
+                    {/* add a delete button */}
+                    <button
+                        className="px-6 py-2 bg-red-500 text-white font-medium rounded-lg shadow hover:bg-red-700 transition duration-150"
+                        onClick={() => deleteTable()}
+                    >
+                        Delete Table
+                    </button>
                     <button
                         onClick={() => setIsOpen(false)}
                         className="px-6 py-2 bg-gray-200 text-gray-800 font-medium rounded-lg shadow hover:bg-gray-300 transition duration-150"

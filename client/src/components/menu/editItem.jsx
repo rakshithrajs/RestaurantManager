@@ -1,14 +1,14 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "../../api/api.jsx";
-import { renderState } from "../../contexts/renderContext.jsx";
 import { useAuthContext } from "../../hooks/useAuthContext.jsx";
+import { actions, useStore } from "../../contexts/storeContext.jsx";
 
 const EditItem = ({ isVisible, setIsVisible, id, editItem, category }) => {
     // For auth token
     const { user } = useAuthContext();
 
-    // For rendering state
-    const [render, setRender] = useContext(renderState);
+    //state manager
+    const { state, dispatch } = useStore();
 
     // For form data state
     const [formData, setFormData] = useState();
@@ -27,12 +27,11 @@ const EditItem = ({ isVisible, setIsVisible, id, editItem, category }) => {
                     Authorization: `Bearer ${user.token}`,
                 },
             });
-            console.log(response.data);
+            dispatch({ type: actions.EDIT_ITEM, payload: response.data });
         } catch (error) {
             console.error(error.message);
         }
         setIsVisible(!isVisible);
-        setRender(render + 1);
     };
 
     if (!isVisible) return null;
@@ -115,7 +114,7 @@ const EditItem = ({ isVisible, setIsVisible, id, editItem, category }) => {
                             <option value="" disabled>
                                 Select category
                             </option>
-                            {category.map((c) => (
+                            {state.categories.map((c) => (
                                 <option key={c._id} value={c._id}>
                                     {c.name}
                                 </option>

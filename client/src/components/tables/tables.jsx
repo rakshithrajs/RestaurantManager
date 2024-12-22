@@ -1,9 +1,6 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import moment from "moment";
-
 import { capitalize } from "../../utils/capitalize.jsx";
-
-import { renderState } from "../../contexts/renderContext.jsx";
 import { useAuthContext } from "../../hooks/useAuthContext.jsx";
 
 import AddTable from "./addTable.jsx";
@@ -12,13 +9,13 @@ import Table from "./table.jsx";
 import { IoMdAddCircleOutline } from "react-icons/io";
 
 import api from "../../api/api.jsx";
+import { actions, useStore } from "../../contexts/storeContext.jsx";
 
 const Tables = () => {
     const { user } = useAuthContext(); // Auth token
-    const [render, setRender] = useContext(renderState); // Trigger re-renders
+    const { state, dispatch } = useStore(); // Access state and dispatch from store
 
-    // State for table data and modals
-    const [tables, setTables] = useState([]);
+    // State for modals
     const [isAddTableOpen, setAddTableOpen] = useState(false);
     const [isTableDetailOpen, setTableDetailOpen] = useState(false);
     const [tableData, setTableData] = useState({
@@ -28,7 +25,10 @@ const Tables = () => {
         veg_or_nonveg: "",
     });
 
-    // Fetch tables data from API
+    // Local state to track tables and waiting times
+    const [localTables, setLocalTables] = useState([]);
+
+    // Fetch tables data from API (only once when component mounts)
     useEffect(() => {
         const fetchTables = async () => {
             try {
@@ -37,7 +37,11 @@ const Tables = () => {
                         Authorization: `Bearer ${user.token}`,
                     },
                 });
-                setTables(response.data);
+                dispatch({
+                    type: actions.FETCH_TABLES,
+                    payload: response.data,
+                });
+                setLocalTables(response.data); // Initialize local tables
             } catch (error) {
                 console.error("Error fetching tables:", error.message);
             }
@@ -46,21 +50,28 @@ const Tables = () => {
         if (user) {
             fetchTables();
         }
-    }, [render, user]);
+    }, [user, dispatch]);
 
-    // Update waiting time every second
+    // Sync localTables with state.tables whenever it changes
+    useEffect(() => {
+        setLocalTables(state.tables);
+    }, [state.tables]);
+
+    // Update waiting times dynamically every second
     useEffect(() => {
         const intervalId = setInterval(() => {
-            setTables((prevTables) =>
+            setLocalTables((prevTables) =>
                 prevTables.map((table) => ({
                     ...table,
-                    waitingTime: moment(table.createdAt).toNow(true),
+                    waitingTime: table.createdAt
+                        ? moment(table.createdAt).fromNow(true)
+                        : "Just Now",
                 }))
             );
         }, 1000);
 
-        return () => clearInterval(intervalId);
-    }, [tables]);
+        return () => clearInterval(intervalId); // Cleanup interval on component unmount
+    }, []);
 
     return (
         <div className="relative h-[91vh] bg-gradient-to-b from-gray-100 to-gray-300">
@@ -91,7 +102,7 @@ const Tables = () => {
 
             {/* Table Display */}
             <main className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 p-6 md:px-12 lg:px-20">
-                {tables.map((table, index) => (
+                {localTables.map((table, index) => (
                     <button
                         key={index}
                         onClick={() => {
