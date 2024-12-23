@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import rupee from "../../utils/currencyFormatter.jsx";
 import { capitalize } from "../../utils/capitalize.jsx";
