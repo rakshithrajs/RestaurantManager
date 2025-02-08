@@ -26,6 +26,11 @@ const menuSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "categoryModel",
     },
+    user_id: {
+        type: Schema.Types.ObjectId,
+        ref: "userModel",
+        required: true,
+    },
 });
 
 export const menuModel = new model("menuModel", menuSchema);

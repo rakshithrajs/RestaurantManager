@@ -2,8 +2,13 @@ import { orderModel } from "../models/orderModel.js";
 
 import { CustomError } from "../utils/customError.js";
 
-const getGroupedOrders = async () => {
+const getGroupedOrders = async (req) => {
     const groupedOrders = await orderModel.aggregate([
+        {
+            $match: {
+                user_id: req.user[0]._id,
+            },
+        },
         {
             $lookup: {
                 from: "menumodels",
@@ -52,7 +57,7 @@ const getGroupedOrders = async () => {
 //to dsiplay the orders in all order screen
 export const getOrders = async (req, res, next) => {
     try {
-        res.status(200).json(await getGroupedOrders());
+        res.status(200).json(await getGroupedOrders(req));
     } catch (error) {
         const err = new CustomError(error.message, error.statusCode);
         next(err);
@@ -76,12 +81,14 @@ export const getOneOrder = async (req, res, next) => {
 
 //make an order
 export const addOrder = async (req, res, next) => {
+    const user_id = req.user[0]._id;
     try {
         const order = req.body;
-        const newOrder = new orderModel(order);
+        const newOrder = new orderModel({ ...order, user_id });
         await newOrder.save();
-        res.status(201).json(await getGroupedOrders());
+        res.status(201).json(await getGroupedOrders(req));
     } catch (error) {
+        console.log(error);
         const err = new CustomError(error.message, error.statusCode);
         next(err);
     }
@@ -122,7 +129,7 @@ export const updateOrder = async (req, res, next) => {
     try {
         // id contains tableId and itemId in string JSON format match the tableId and itemId and update the status
         const updatedOrder = await orderModel.findOneAndUpdate(
-            { tableId, itemId },
+            { tableId, itemId, user_id: req.user[0]._id },
             { status },
             { new: true }
         );

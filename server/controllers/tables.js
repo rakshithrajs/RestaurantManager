@@ -7,7 +7,7 @@ import { CustomError } from "../utils/customError.js";
 //get all tables
 export const getTables = async (req, res, next) => {
     try {
-        const tables = await tableModel.find();
+        const tables = await tableModel.find({ user_id: req.user[0]._id });
         res.status(200).json(tables);
     } catch (error) {
         const err = new CustomError(error.message, error.statusCode);
@@ -31,7 +31,7 @@ export const getOneTable = async (req, res, next) => {
 export const addTable = async (req, res, next) => {
     const table = req.body;
     try {
-        const newTable = new tableModel(table);
+        const newTable = new tableModel({ ...table, user_id: req.user[0]._id });
         await newTable.save();
         res.status(201).json(newTable);
     } catch (error) {

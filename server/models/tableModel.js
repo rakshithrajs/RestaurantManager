@@ -26,6 +26,11 @@ const tableSchema = new Schema(
             required: true,
             enum: ["veg", "non-veg", "both"],
         },
+        user_id: {
+            type: Schema.Types.ObjectId,
+            ref: "userModel",
+            required: true,
+        },
     },
     { timestamps: true }
 );

@@ -73,5 +73,4 @@ userSchema.statics.signUp = async function (email, password) {
     return user;
 };
 
-
 export const authModel = new model("authModel", userSchema);

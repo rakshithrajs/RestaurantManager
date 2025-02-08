@@ -12,7 +12,7 @@ const PlaceOrder = () => {
     const { id } = useParams();
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-300 flex flex-col">
+        <div className="p-[0.42rem] bg-gradient-to-br from-gray-100 to-gray-400 flex flex-col">
             {/* Main Content */}
             <div className="flex flex-col lg:flex-row gap-6 p-6 lg:h-[80vh]">
                 {/* Menu Section */}

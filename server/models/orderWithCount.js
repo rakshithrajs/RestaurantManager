@@ -7,6 +7,11 @@ const orderWithCount = new Schema({
     count: {
         type: Number,
     },
+    user_id: {
+        type: Schema.Types.ObjectId,
+        ref: "userModel",
+        required: true,
+    },
 });
 
 export const orderCount = new model("ordercounts", orderWithCount);

@@ -15,7 +15,7 @@ export const getTableBill = async (req, res, next) => {
                 $match: {
                     tableId: tableId,
                 },
-            }, //joining tables
+            },
             {
                 $lookup: {
                     from: "menumodels",
@@ -53,7 +53,6 @@ export const getTableBill = async (req, res, next) => {
                 },
             },
             {
-                // we are grouping the the elements to have list of itmes
                 $group: {
                     _id: "$tableId",
                     customerName: { $first: "$customerName" },
@@ -74,7 +73,10 @@ export const getTableBill = async (req, res, next) => {
 export const postOrderHistory = async (req, res, next) => {
     try {
         const order = req.body;
-        const orderHistory = await orderHistoryModel.create(order);
+        const orderHistory = await orderHistoryModel.create({
+            ...order,
+            user_id: req.user[0]._id,
+        });
         res.status(200).json(orderHistory);
     } catch (error) {
         const err = new CustomError(error.message, error.statusCode);

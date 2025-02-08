@@ -25,6 +25,11 @@ const orderSchema = new Schema(
             ],
             default: "confirmed",
         },
+        user_id: {
+            type: Schema.Types.ObjectId,
+            ref: "userModel",
+            required: true,
+        },
     },
     { timestamps: true }
 );

@@ -39,11 +39,12 @@ export const actions = {
 };
 
 // Utility function for filtering data
-const filterDataByTime = (data, format) =>
-    data.filter(
+const filterDataByTime = (data, format) => {
+    return data.filter(
         (item) =>
             moment(item.createdAt).format(format) === moment().format(format)
     );
+};
 
 // Reducer Function
 const reducer = (state, action) => {

@@ -7,6 +7,11 @@ export const getSales = async (req, res, next) => {
     try {
         const sales = await orderHistoryModel.aggregate([
             {
+                $match: {
+                    user_id: req.user[0]._id,
+                },
+            },
+            {
                 $project: {
                     _id: "$_id",
                     createdAt: "$createdAt",
@@ -28,6 +33,11 @@ export const getDish = async (req, res, next) => {
         const dish = await orderHistoryModel.aggregate([
             {
                 $unwind: "$items",
+            },
+            {
+                $match: {
+                    user_id: req.user[0]._id,
+                },
             },
             {
                 $group: {

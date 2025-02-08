@@ -23,6 +23,11 @@ const historySchema = new Schema({
     total: {
         type: Number,
     },
+    user_id: {
+        type: Schema.Types.ObjectId,
+        ref: "userModel",
+        required: true,
+    },
 });
 
 export const orderHistoryModel = new model("orderHistoryModel", historySchema);
