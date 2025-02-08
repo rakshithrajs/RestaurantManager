@@ -6,6 +6,7 @@ import bodyparser from "body-parser";
 import dotenv from "dotenv";
 import morgan from "morgan";
 import helmet from "helmet";
+import cookieParser from "cookie-parser";
 
 // route imports
 import menuRoutes from "./Routes/menuRoutes.js";
@@ -52,6 +53,7 @@ app.use(
 
 //functional middleware
 app.use(cors(corsOptions));
+app.use(cookieParser())
 app.use(express.json());
 app.use(bodyparser.urlencoded({ extended: true }));
 app.use(helmet());
